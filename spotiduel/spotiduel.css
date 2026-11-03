@@ -1,0 +1,2948 @@
+html,
+body {
+  min-height: 100%;
+}
+
+html {
+  --game-cover-a: none;
+  --game-cover-b: none;
+}
+
+body {
+  position: relative;
+  isolation: isolate;
+  background:
+    radial-gradient(
+      ellipse 1000px 620px at 50% -12%,
+      rgba(30, 215, 96, 0.09),
+      transparent 62%
+    ),
+    var(--bg);
+  transition:
+    background-color 500ms ease,
+    color 300ms ease;
+}
+
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  inset: -12%;
+  z-index: -10;
+  pointer-events: none;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  filter: blur(90px) saturate(1.35);
+  opacity: 0;
+  transform: scale(1.1);
+  transition:
+    opacity 700ms ease,
+    transform 1200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+body::before {
+  background-image: var(--game-cover-a);
+  mix-blend-mode: screen;
+}
+
+body::after {
+  background-image: var(--game-cover-b);
+  mix-blend-mode: screen;
+}
+
+body.game-active::before,
+body.result-active::before {
+  opacity: 0.12;
+}
+
+body.game-active::after,
+body.result-active::after {
+  opacity: 0.11;
+}
+
+body.game-active::before {
+  animation: ambientFloatA 14s ease-in-out infinite alternate;
+}
+
+body.game-active::after {
+  animation: ambientFloatB 17s ease-in-out infinite alternate;
+}
+
+@keyframes ambientFloatA {
+  from {
+    transform: scale(1.08) translate3d(-2%, -1%, 0);
+  }
+
+  to {
+    transform: scale(1.17) translate3d(3%, 2%, 0);
+  }
+}
+
+@keyframes ambientFloatB {
+  from {
+    transform: scale(1.12) translate3d(3%, 1%, 0);
+  }
+
+  to {
+    transform: scale(1.2) translate3d(-3%, -2%, 0);
+  }
+}
+
+.game {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  min-height: calc(100vh - 100px);
+  padding-bottom: 80px;
+}
+
+.scene {
+  max-width: 80vw;
+}
+
+.game::before {
+  content: "";
+  position: fixed;
+  z-index: -5;
+  inset: -5%;
+  pointer-events: none;
+  background-image:
+    linear-gradient(
+      90deg,
+      rgba(8, 8, 10, 0.72) 0%,
+      rgba(8, 8, 10, 0.38) 38%,
+      rgba(8, 8, 10, 0.04) 48%,
+      rgba(8, 8, 10, 0.04) 52%,
+      rgba(8, 8, 10, 0.38) 62%,
+      rgba(8, 8, 10, 0.72) 100%
+    ),
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      transparent 43%,
+      rgba(0, 0, 0, 0.38) 49%,
+      rgba(0, 0, 0, 0.38) 51%,
+      transparent 57%,
+      transparent 100%
+    ),
+    var(--game-cover-a), var(--game-cover-b);
+  background-size:
+    100% 100%,
+    100% 100%,
+    50% 100%,
+    50% 100%;
+  background-position:
+    center,
+    center,
+    left center,
+    right center;
+  background-repeat: no-repeat;
+  filter: blur(34px) saturate(1.35);
+  transform: scale(1.08);
+  opacity: 0.9;
+  transition:
+    opacity 600ms ease,
+    filter 600ms ease;
+}
+
+.game::after {
+  content: "";
+  position: fixed;
+  z-index: -4;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(5, 5, 7, 0.5) 0%,
+      rgba(5, 5, 7, 0.2) 25%,
+      rgba(5, 5, 7, 0.02) 42%,
+      rgba(5, 5, 7, 0.2) 50%,
+      rgba(5, 5, 7, 0.02) 58%,
+      rgba(5, 5, 7, 0.2) 75%,
+      rgba(5, 5, 7, 0.5) 100%
+    ),
+    radial-gradient(
+      ellipse 38% 75% at 50% 50%,
+      rgba(8, 8, 10, 0.02),
+      rgba(8, 8, 10, 0.52) 100%
+    );
+}
+
+.game-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto 28px;
+}
+
+.game-back {
+  flex: 0 0 auto;
+  appearance: none;
+  border: 1px solid var(--border);
+  background: rgba(20, 20, 22, 0.72);
+  color: var(--text-muted);
+  border-radius: 999px;
+  padding: 9px 14px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  cursor: pointer;
+  backdrop-filter: blur(14px);
+  transition:
+    color 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease,
+    background 160ms ease;
+}
+
+.game-back:hover {
+  color: var(--green);
+  border-color: var(--green-dim);
+  background: rgba(30, 215, 96, 0.07);
+  transform: translateX(-3px);
+}
+
+.game-context {
+  min-width: 0;
+}
+
+.game-mode-label {
+  color: var(--green);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+
+.game-playlist-name {
+  margin-top: 4px;
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: clamp(20px, 2vw, 28px);
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.game-status {
+  position: relative;
+  width: fit-content;
+  margin: 0 auto 28px;
+  padding: 7px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 999px;
+  background: rgba(15, 15, 17, 0.45);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  backdrop-filter: blur(16px);
+  transition:
+    border-color 250ms ease,
+    background 250ms ease;
+}
+.game-status.final-round {
+  color: #fff;
+  border-color: rgba(255, 215, 80, 0.55);
+  background:
+    linear-gradient(135deg, rgba(255, 196, 60, 0.16), rgba(255, 80, 140, 0.12)),
+    rgba(15, 15, 17, 0.65);
+
+  box-shadow:
+    0 0 0 1px rgba(255, 215, 80, 0.08),
+    0 0 18px rgba(255, 190, 50, 0.18),
+    0 0 45px rgba(255, 80, 140, 0.08);
+
+  animation:
+    final-round-pulse 1.8s ease-in-out infinite,
+    final-round-enter 500ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.game-status.final-round::before,
+.game-status.final-round::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #ffd75a;
+  box-shadow:
+    0 0 8px #ffd75a,
+    0 0 18px rgba(255, 215, 90, 0.8);
+  transform: translateY(-50%);
+  animation: final-round-dot 1.2s ease-in-out infinite;
+}
+
+.game-status.final-round::before {
+  left: -14px;
+}
+
+.game-status.final-round::after {
+  right: -14px;
+  animation-delay: 600ms;
+}
+
+@keyframes final-round-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 1px rgba(255, 215, 80, 0.08),
+      0 0 18px rgba(255, 190, 50, 0.18),
+      0 0 45px rgba(255, 80, 140, 0.08);
+  }
+
+  50% {
+    box-shadow:
+      0 0 0 1px rgba(255, 215, 80, 0.18),
+      0 0 28px rgba(255, 190, 50, 0.32),
+      0 0 65px rgba(255, 80, 140, 0.16);
+  }
+}
+
+@keyframes final-round-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+    filter: blur(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes final-round-dot {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: translateY(-50%) scale(0.7);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translateY(-50%) scale(1.35);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .game-status.final-round,
+  .game-status.final-round::before,
+  .game-status.final-round::after {
+    animation: none;
+  }
+}
+.duel {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 80vh;
+  gap: 20px;
+  flex-direction: row;
+  transition:
+    opacity 220ms ease,
+    transform 350ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.duel-loading {
+  opacity: 0.5;
+  transform: scale(0.985);
+}
+
+.duel-vs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4vw;
+  aspect-ratio: 1 / 1;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  background:
+    radial-gradient(
+      circle at 35% 30%,
+      rgba(255, 255, 255, 0.08),
+      transparent 55%
+    ),
+    rgba(14, 14, 16, 0.86);
+  color: var(--dim);
+  font-family: var(--font-display);
+  font-size: 1.5vw;
+  box-shadow:
+    0 10px 35px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(18px);
+  transition:
+    transform 250ms ease,
+    border-color 250ms ease,
+    color 250ms ease,
+    box-shadow 250ms ease;
+}
+
+.duel:hover .duel-vs {
+  color: var(--green);
+  border-color: rgba(30, 215, 96, 0.25);
+  box-shadow:
+    0 10px 35px rgba(0, 0, 0, 0.42),
+    0 0 30px rgba(30, 215, 96, 0.08);
+  transform: scale(1.08);
+}
+
+.track-card {
+  position: relative;
+  touch-action: none;
+  width: 100%;
+
+  appearance: none;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 22px;
+  padding: 14px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.055),
+      rgba(255, 255, 255, 0.012)
+    ),
+    rgba(18, 18, 21, 0.72);
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow:
+    0 20px 70px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  transition:
+    transform 300ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 240ms ease,
+    box-shadow 300ms ease,
+    background 300ms ease,
+    opacity 240ms ease,
+    filter 240ms ease;
+}
+
+.track-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 50% 0%,
+    rgba(255, 255, 255, 0.075),
+    transparent 45%
+  );
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+
+.track-card::after {
+  content: "";
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  bottom: -25px;
+  height: 45px;
+  pointer-events: none;
+  background: rgba(30, 215, 96, 0.25);
+  filter: blur(30px);
+  opacity: 0;
+  transition:
+    opacity 300ms ease,
+    transform 300ms ease;
+}
+
+.track-card:hover {
+  transform: translateY(-9px) scale(1.012);
+  border-color: rgba(30, 215, 96, 0.42);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.075),
+      rgba(255, 255, 255, 0.018)
+    ),
+    rgba(20, 20, 23, 0.78);
+  box-shadow:
+    0 30px 90px rgba(0, 0, 0, 0.52),
+    0 0 50px rgba(30, 215, 96, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
+.track-card:hover::before {
+  opacity: 1;
+}
+
+.track-card:hover::after {
+  opacity: 1;
+  transform: translateY(-8px);
+}
+
+.track-card:active {
+  transform: translateY(-3px) scale(0.995);
+}
+
+.track-card:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 4px;
+}
+
+.track-card[aria-disabled="true"] {
+  cursor: default;
+  pointer-events: none;
+}
+
+.track-card.selected {
+  border-color: var(--green);
+  transform: translateY(-7px) scale(1.01);
+  box-shadow:
+    0 25px 75px rgba(0, 0, 0, 0.45),
+    0 0 45px rgba(30, 215, 96, 0.16);
+}
+
+.track-card.lost {
+  opacity: 0.32;
+  transform: scale(0.97);
+  filter: saturate(0.5);
+}
+
+.track-card.winner {
+  border-color: var(--green);
+  box-shadow:
+    0 25px 80px rgba(0, 0, 0, 0.48),
+    0 0 60px rgba(30, 215, 96, 0.18);
+}
+
+.track-cover-wrap {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 15px;
+  background: var(--bg);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+  transform: translateZ(0);
+}
+
+.track-cover {
+  -webkit-user-drag: none;
+  user-select: none;
+  -webkit-user-select: none;
+  pointer-events: none;
+
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  transition:
+    transform 550ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 350ms ease;
+}
+
+.track-card:hover .track-cover {
+  transform: scale(1.045);
+  filter: saturate(1.08) contrast(1.025);
+}
+
+.track-cover-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-faint);
+  font-family: var(--font-display);
+  font-size: 46px;
+}
+
+.track-number {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 50%;
+  background: rgba(8, 8, 10, 0.64);
+  color: rgba(255, 255, 255, 0.78);
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 700;
+  backdrop-filter: blur(12px);
+  transition:
+    color 180ms ease,
+    border-color 180ms ease,
+    transform 180ms ease;
+}
+
+.track-card:hover .track-number {
+  color: var(--green);
+  border-color: rgba(30, 215, 96, 0.3);
+  transform: scale(1.06);
+}
+
+.track-info {
+  min-width: 0;
+  padding: 15px 3px 3px;
+}
+
+.track-name {
+  color: var(--text);
+  font-size: clamp(15px, 1.4vw, 19px);
+  font-weight: 700;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.track-artists {
+  margin-top: 6px;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.track-album {
+  margin-top: 6px;
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.duel-hint {
+  position: relative;
+  z-index: 2;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+
+  width: fit-content;
+  margin: 20px auto 0;
+  padding: 8px 14px;
+
+  color: rgba(255, 255, 255, 0.92);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+
+  background:
+    linear-gradient(135deg, rgba(30, 215, 96, 0.1), rgba(255, 255, 255, 0.045)),
+    rgba(8, 8, 10, 0.68);
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+
+  box-shadow:
+    0 6px 24px rgba(0, 0, 0, 0.35),
+    0 0 24px rgba(30, 215, 96, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+
+  animation: duelHintFloat 3s ease-in-out infinite;
+}
+
+/* Equalizer indicator */
+.duel-hint::before {
+  content: "";
+  display: block;
+  flex: 0 0 16px;
+  width: 16px;
+  height: 12px;
+
+  background:
+    linear-gradient(to top, var(--green) 0 70%, transparent 70%) 0 100% / 3px
+      100% no-repeat,
+    linear-gradient(to top, var(--green) 0 100%, transparent 100%) 6px 100% /
+      3px 100% no-repeat,
+    linear-gradient(to top, var(--green) 0 55%, transparent 55%) 12px 100% / 3px
+      100% no-repeat;
+
+  filter: drop-shadow(0 0 5px rgba(30, 215, 96, 0.45));
+
+  animation: duelHintBars 900ms ease-in-out infinite alternate;
+}
+
+/* Keep the pulse around the entire badge */
+.duel-hint::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+
+  border-radius: inherit;
+  border: 1px solid rgba(30, 215, 96, 0.2);
+
+  pointer-events: none;
+
+  opacity: 0;
+  animation: duelHintPulse 2.4s ease-out infinite;
+}
+
+@keyframes duelHintBars {
+  0% {
+    transform: scaleY(0.65);
+    opacity: 0.7;
+  }
+
+  50% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scaleY(0.75);
+    opacity: 0.8;
+  }
+}
+
+@keyframes duelHintPulse {
+  0% {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+
+  25% {
+    opacity: 0.45;
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes duelHintFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-2px);
+  }
+}
+/* =========================================================
+   SPOTIFY-STYLE PLAYCOUNT REVEAL
+   ========================================================= */
+
+.playcount-reveal {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  visibility: hidden;
+  opacity: 0;
+}
+
+.playcount-reveal.is-active {
+  visibility: visible;
+  opacity: 1;
+}
+
+.playcount-reveal-backdrop {
+  position: absolute;
+  inset: 0;
+  border-radius: 38px;
+  width: 100%;
+
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(30, 215, 96, 0.075),
+      transparent 38%
+    ),
+    radial-gradient(
+      ellipse at center,
+      rgba(8, 8, 10, 0.88),
+      rgba(8, 8, 10, 0.68) 58%,
+      rgba(8, 8, 10, 0.28)
+    );
+
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  opacity: 0;
+
+  animation: revealBackdropIn 550ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* ---------------------------------------------------------
+   Ambient Spotify-style soundwave
+   --------------------------------------------------------- */
+
+.reveal-soundwave {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+
+  width: min(48vw, 600px);
+  height: min(48vw, 600px);
+
+  border: 1px solid rgba(30, 215, 96, 0.12);
+  border-radius: 50%;
+
+  transform: translate(-50%, -50%) scale(0.5);
+  opacity: 0;
+
+  box-shadow:
+    0 0 80px rgba(30, 215, 96, 0.04),
+    inset 0 0 80px rgba(30, 215, 96, 0.025);
+
+  animation: revealWaveIn 1600ms cubic-bezier(0.22, 1, 0.36, 1) 250ms forwards;
+}
+
+.reveal-soundwave-b {
+  width: min(68vw, 820px);
+  height: min(68vw, 820px);
+
+  border-color: rgba(30, 215, 96, 0.065);
+
+  animation-delay: 450ms;
+}
+
+/* ---------------------------------------------------------
+   Main stage
+   --------------------------------------------------------- */
+
+.playcount-reveal-stage {
+  position: relative;
+  z-index: 2;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(260px, 28vw)
+    minmax(100px, 8vw)
+    minmax(260px, 28vw);
+
+  align-items: center;
+  justify-content: center;
+
+  width: min(96vw, 1250px);
+
+  gap: 3vw;
+}
+
+/* ---------------------------------------------------------
+   Reveal cards
+   --------------------------------------------------------- */
+
+.reveal-track {
+  position: relative;
+
+  min-width: 0;
+
+  padding: 16px;
+
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 24px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.075),
+      rgba(255, 255, 255, 0.018)
+    ),
+    rgba(18, 18, 21, 0.94);
+
+  box-shadow:
+    0 35px 100px rgba(0, 0, 0, 0.58),
+    inset 0 1px 0 rgba(255, 255, 255, 0.065);
+
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+
+  overflow: hidden;
+}
+
+/* ---------------------------------------------------------
+   Loser
+   --------------------------------------------------------- */
+
+.reveal-loser {
+  transform-origin: right center;
+
+  animation:
+    revealLoserIn 700ms cubic-bezier(0.16, 1, 0.3, 1) forwards,
+    revealLoserSettle 900ms 1500ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* ---------------------------------------------------------
+   Winner
+   --------------------------------------------------------- */
+
+.reveal-winner {
+  transform-origin: left center;
+
+  border-color: rgba(30, 215, 96, 0.25);
+
+  box-shadow:
+    0 35px 110px rgba(0, 0, 0, 0.58),
+    0 0 80px rgba(30, 215, 96, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+
+  animation:
+    revealWinnerIn 700ms cubic-bezier(0.16, 1, 0.3, 1) forwards,
+    revealWinnerPulse 1200ms 1450ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* ---------------------------------------------------------
+   Cover
+   --------------------------------------------------------- */
+
+.reveal-cover-wrap {
+  position: relative;
+
+  width: 100%;
+  aspect-ratio: 1;
+
+  overflow: hidden;
+
+  border-radius: 16px;
+
+  background: var(--bg);
+
+  box-shadow:
+    0 18px 45px rgba(0, 0, 0, 0.42),
+    0 0 0 1px rgba(255, 255, 255, 0.035);
+}
+
+.reveal-cover {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  transform: scale(1.01);
+
+  animation: revealCoverIn 900ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.reveal-cover-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--text-faint);
+  font-family: var(--font-display);
+  font-size: 52px;
+}
+
+/* ---------------------------------------------------------
+   Album-art shine
+   --------------------------------------------------------- */
+
+.reveal-cover-shine {
+  position: absolute;
+  inset: 0;
+
+  pointer-events: none;
+
+  background: linear-gradient(
+    115deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.16) 45%,
+    transparent 65%
+  );
+
+  transform: translateX(-120%);
+
+  animation: revealCoverShine 1200ms 450ms cubic-bezier(0.22, 1, 0.36, 1)
+    forwards;
+}
+
+/* ---------------------------------------------------------
+   Text
+   --------------------------------------------------------- */
+
+.reveal-track-meta {
+  min-width: 0;
+  padding: 13px 3px 3px;
+}
+
+.reveal-track-label {
+  margin-bottom: 5px;
+
+  color: var(--text-faint);
+
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 700;
+
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.reveal-winner-label {
+  color: var(--green);
+
+  text-shadow: 0 0 18px rgba(30, 215, 96, 0.28);
+}
+
+.reveal-track-name {
+  color: var(--text);
+
+  font-size: clamp(14px, 1.4vw, 19px);
+  font-weight: 700;
+
+  line-height: 1.25;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---------------------------------------------------------
+   Playcount
+   --------------------------------------------------------- */
+
+.reveal-count {
+  display: flex;
+  align-items: baseline;
+
+  gap: 9px;
+
+  margin-top: 10px;
+}
+
+.reveal-count-label {
+  color: var(--text-faint);
+
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 700;
+
+  letter-spacing: 0.1em;
+}
+
+.reveal-count strong {
+  color: var(--green);
+
+  font-family: var(--font-mono);
+
+  font-size: clamp(22px, 2.8vw, 32px);
+  font-weight: 700;
+
+  line-height: 1;
+
+  text-shadow: 0 0 24px rgba(30, 215, 96, 0.28);
+
+  transition:
+    text-shadow 250ms ease,
+    transform 250ms ease;
+}
+
+/* ---------------------------------------------------------
+   Center
+   --------------------------------------------------------- */
+
+.reveal-center {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 130px;
+  height: 130px;
+
+  justify-self: center;
+}
+
+/* Spotify-style green pulse rings */
+
+.reveal-center-ring {
+  position: absolute;
+
+  width: 72px;
+  height: 72px;
+
+  border: 1px solid rgba(30, 215, 96, 0.4);
+
+  border-radius: 50%;
+
+  opacity: 0;
+  transform: scale(0.35);
+
+  animation: revealCenterPulse 1400ms 600ms cubic-bezier(0.22, 1, 0.36, 1)
+    forwards;
+}
+
+.reveal-ring-two {
+  width: 108px;
+  height: 108px;
+
+  border-color: rgba(30, 215, 96, 0.18);
+
+  animation-delay: 800ms;
+}
+
+/* ---------------------------------------------------------
+   Equalizer
+   --------------------------------------------------------- */
+
+.reveal-equalizer {
+  position: absolute;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 4px;
+
+  width: 44px;
+  height: 40px;
+
+  z-index: 3;
+
+  opacity: 0;
+
+  animation: revealEqualizerIn 450ms 500ms cubic-bezier(0.22, 1, 0.36, 1)
+    forwards;
+}
+
+.reveal-equalizer i {
+  display: block;
+
+  width: 4px;
+  height: 14px;
+
+  border-radius: 999px;
+
+  background: var(--green);
+
+  box-shadow: 0 0 14px rgba(30, 215, 96, 0.42);
+
+  animation: revealEqualizerBars 800ms ease-in-out infinite alternate;
+}
+
+.reveal-equalizer i:nth-child(1) {
+  animation-delay: -300ms;
+}
+
+.reveal-equalizer i:nth-child(2) {
+  height: 25px;
+  animation-delay: -150ms;
+}
+
+.reveal-equalizer i:nth-child(3) {
+  height: 32px;
+}
+
+.reveal-equalizer i:nth-child(4) {
+  height: 21px;
+  animation-delay: -220ms;
+}
+
+.reveal-equalizer i:nth-child(5) {
+  animation-delay: -80ms;
+}
+
+/* ---------------------------------------------------------
+   Center label
+   --------------------------------------------------------- */
+
+.reveal-center-label {
+  position: absolute;
+
+  top: calc(50% + 47px);
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+
+  gap: 2px;
+
+  white-space: nowrap;
+
+  opacity: 0;
+
+  transform: translateY(6px);
+
+  animation: revealCenterLabelIn 450ms 1150ms cubic-bezier(0.22, 1, 0.36, 1)
+    forwards;
+}
+
+.reveal-center-label span {
+  color: var(--text-faint);
+
+  font-family: var(--font-mono);
+  font-size: 7px;
+  font-weight: 700;
+
+  letter-spacing: 0.12em;
+}
+
+.reveal-center-label strong {
+  color: var(--green);
+
+  font-family: var(--font-mono);
+  font-size: 8px;
+
+  letter-spacing: 0.08em;
+}
+
+/* =========================================================
+   ANIMATIONS
+   ========================================================= */
+
+@keyframes revealBackdropIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes revealWaveIn {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.45);
+  }
+
+  30% {
+    opacity: 0.7;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes revealLoserIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-80px) scale(0.82) rotate(-3deg);
+    filter: blur(5px);
+  }
+
+  55% {
+    opacity: 1;
+    filter: blur(0);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1) rotate(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes revealWinnerIn {
+  0% {
+    opacity: 0;
+    transform: translateX(80px) scale(0.82) rotate(3deg);
+    filter: blur(5px);
+  }
+
+  55% {
+    opacity: 1;
+    filter: blur(0);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1) rotate(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes revealLoserSettle {
+  0% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+    filter: saturate(1);
+  }
+
+  100% {
+    opacity: 0.46;
+    transform: translateX(-18px) scale(0.94);
+    filter: saturate(0.55) brightness(0.78);
+  }
+}
+
+@keyframes revealWinnerPulse {
+  0% {
+    transform: scale(1);
+  }
+
+  35% {
+    transform: scale(1.045);
+  }
+
+  65% {
+    transform: scale(1.025);
+  }
+
+  100% {
+    transform: scale(1.035);
+  }
+}
+
+@keyframes revealCoverIn {
+  from {
+    transform: scale(1.08);
+    filter: saturate(0.7) brightness(0.75);
+  }
+
+  to {
+    transform: scale(1.01);
+    filter: saturate(1.05) brightness(1);
+  }
+}
+
+@keyframes revealCoverShine {
+  from {
+    transform: translateX(-120%);
+  }
+
+  to {
+    transform: translateX(120%);
+  }
+}
+
+@keyframes revealCenterPulse {
+  0% {
+    opacity: 0;
+    transform: scale(0.35);
+  }
+
+  25% {
+    opacity: 0.75;
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.45);
+  }
+}
+
+@keyframes revealEqualizerIn {
+  from {
+    opacity: 0;
+    transform: scale(0.65);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes revealEqualizerBars {
+  from {
+    transform: scaleY(0.45);
+  }
+
+  to {
+    transform: scaleY(1.2);
+  }
+}
+
+@keyframes revealCenterLabelIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.playcount-reveal.is-done {
+  animation: revealExit 650ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes revealExit {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.025);
+  }
+}
+
+.result-screen {
+  position: relative;
+  width: 100%;
+  min-height: calc(100vh - 100px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 55px 24px 100px;
+}
+
+.result-inner {
+  position: relative;
+  width: 100%;
+  max-width: 820px;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.result-eyebrow {
+  color: var(--green);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.result-title {
+  margin: 10px 0 0;
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: clamp(40px, 7vw, 74px);
+  line-height: 0.96;
+  letter-spacing: -0.03em;
+  text-shadow: 0 10px 50px rgba(0, 0, 0, 0.4);
+  animation: resultTitleIn 500ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes resultTitleIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.result-subtitle {
+  max-width: 560px;
+  margin: 17px auto 36px;
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.result-track {
+  width: 100%;
+}
+
+.result-track-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 230px minmax(0, 1fr);
+  gap: 30px;
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 22px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.045),
+      rgba(255, 255, 255, 0.008) 48%,
+      rgba(0, 0, 0, 0.16)
+    ),
+    rgba(20, 20, 23, 0.76);
+  text-align: left;
+  box-shadow:
+    0 28px 90px rgba(0, 0, 0, 0.45),
+    0 0 70px rgba(30, 215, 96, 0.035),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(24px);
+  overflow: hidden;
+  animation: resultCardIn 650ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes resultCardIn {
+  from {
+    opacity: 0;
+    transform: translateY(22px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.result-track-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 15% 20%,
+    rgba(30, 215, 96, 0.065),
+    transparent 38%
+  );
+}
+
+.result-track-card::after {
+  content: "";
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  right: -120px;
+  bottom: -150px;
+  border-radius: 50%;
+  background: rgba(30, 215, 96, 0.08);
+  filter: blur(60px);
+  pointer-events: none;
+  opacity: 0.5;
+  transition:
+    opacity 400ms ease,
+    transform 500ms ease;
+}
+
+.result-track-card:hover::after {
+  opacity: 0.8;
+  transform: scale(1.15);
+}
+
+.result-cover-wrap {
+  position: relative;
+  width: 230px;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 15px;
+  background: var(--bg);
+  box-shadow:
+    0 18px 45px rgba(0, 0, 0, 0.42),
+    0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+.result-cover {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  transition:
+    transform 700ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 400ms ease;
+}
+
+.result-track-card:hover .result-cover {
+  transform: scale(1.035);
+  filter: saturate(1.08);
+}
+
+.result-cover-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-faint);
+  font-family: var(--font-display);
+  font-size: 50px;
+}
+
+.result-track-info {
+  position: relative;
+  z-index: 2;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.result-track-name {
+  margin: 0;
+  color: var(--text);
+  font-size: clamp(22px, 3vw, 31px);
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.result-track-name a {
+  position: relative;
+  display: inline;
+  color: inherit;
+  text-decoration: none;
+  background: linear-gradient(90deg, var(--green), rgba(30, 215, 96, 0.45));
+  background-repeat: no-repeat;
+  background-size: 0% 2px;
+  background-position: 0 100%;
+  transition:
+    color 220ms ease,
+    text-shadow 220ms ease,
+    background-size 350ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.result-track-name a:hover {
+  color: var(--green);
+  text-shadow: 0 0 24px rgba(30, 215, 96, 0.22);
+  background-size: 100% 2px;
+}
+
+.result-track-name a:focus-visible {
+  outline: none;
+  color: var(--green);
+  text-shadow: 0 0 18px rgba(30, 215, 96, 0.2);
+}
+
+.result-track-artists {
+  margin-top: 8px;
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.result-track-artists a,
+.result-track-album a {
+  position: relative;
+  color: inherit;
+  text-decoration: none;
+  transition:
+    color 180ms ease,
+    opacity 180ms ease;
+}
+
+.result-track-artists a::after,
+.result-track-album a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left center;
+  opacity: 0.7;
+  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.result-track-artists a:hover,
+.result-track-album a:hover {
+  color: var(--green);
+}
+
+.result-track-artists a:hover::after,
+.result-track-album a:hover::after {
+  transform: scaleX(1);
+}
+
+.result-track-artists a:focus-visible,
+.result-track-album a:focus-visible {
+  outline: none;
+  color: var(--green);
+}
+
+.result-track-album {
+  margin-top: 7px;
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.result-track-album a:hover {
+  text-shadow: 0 0 14px rgba(30, 215, 96, 0.16);
+}
+
+.result-track-release {
+  margin-top: 7px;
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+.result-stat {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  margin-top: 18px;
+}
+
+.result-stat-label {
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+}
+
+.result-stat-value {
+  color: var(--green);
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 700;
+  text-shadow: 0 0 18px rgba(30, 215, 96, 0.16);
+}
+
+.result-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 21px;
+}
+
+.result-link-arrow {
+  font-size: 11px;
+  line-height: 1;
+  transition: transform 180ms ease;
+}
+
+.result-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 25px;
+}
+
+.result-button {
+  appearance: none;
+  border-radius: 999px;
+  padding: 11px 19px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease,
+    color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.result-button:hover {
+  transform: translateY(-2px);
+}
+
+.result-button.primary {
+  border: 1px solid var(--green);
+  background: var(--green);
+  color: #000;
+  box-shadow: 0 8px 30px rgba(30, 215, 96, 0.12);
+}
+
+.result-button.primary:hover {
+  box-shadow: 0 12px 38px rgba(30, 215, 96, 0.2);
+}
+
+.result-button.secondary {
+  border: 1px solid var(--border);
+  background: rgba(20, 20, 22, 0.7);
+  color: var(--text-muted);
+  backdrop-filter: blur(14px);
+}
+
+.result-button.secondary:hover {
+  border-color: var(--green-dim);
+  color: var(--green);
+}
+.result-rounds {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 1rem auto 1.5rem;
+  padding: 0.55rem 0.9rem;
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+
+  color: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.track-option {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 25vw;
+}
+.track-open-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 42px;
+  margin-top: 12px;
+  padding: 10px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  background: rgba(12, 12, 14, 0.82);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.035);
+  transition:
+    color 180ms ease,
+    background 180ms ease,
+    border-color 180ms ease,
+    transform 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.track-open-button:hover {
+  color: #000;
+  background: var(--green);
+  border-color: var(--green);
+  transform: translateY(-2px);
+  box-shadow:
+    0 10px 28px rgba(30, 215, 96, 0.18),
+    0 0 25px rgba(30, 215, 96, 0.08);
+}
+
+.track-open-button:active {
+  transform: translateY(0);
+}
+
+.track-open-button:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 3px;
+}
+
+.track-open-arrow {
+  font-size: 14px;
+  line-height: 1;
+}
+
+/* =========================================================
+   PLAYING CARD — MUSIC VIBRATION
+   ========================================================= */
+
+.track-card.is-playing {
+  animation:
+    musicCardPulse 1.2s ease-in-out infinite,
+    musicCardGlow 1.8s ease-in-out infinite;
+  will-change: transform, box-shadow;
+}
+
+.track-card.is-playing::before {
+  opacity: 1;
+  animation: musicCardShimmer 2.4s ease-in-out infinite;
+}
+
+.track-card.is-playing::after {
+  opacity: 0.8;
+  animation: musicCardBass 900ms ease-in-out infinite;
+}
+
+/* Subtle physical "bounce" */
+@keyframes musicCardPulse {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+
+  20% {
+    transform: translateY(-1px) scale(1.003);
+  }
+
+  45% {
+    transform: translateY(1px) scale(0.997);
+  }
+
+  70% {
+    transform: translateY(-0.5px) scale(1.002);
+  }
+}
+
+/* Green energy follows the pulse */
+@keyframes musicCardGlow {
+  0%,
+  100% {
+    box-shadow:
+      0 20px 70px rgba(0, 0, 0, 0.4),
+      0 0 35px rgba(30, 215, 96, 0.06),
+      inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  50% {
+    box-shadow:
+      0 24px 75px rgba(0, 0, 0, 0.44),
+      0 0 65px rgba(30, 215, 96, 0.18),
+      inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  }
+}
+
+/* Light moving across the card */
+@keyframes musicCardShimmer {
+  0% {
+    transform: translateX(-40%);
+    opacity: 0;
+  }
+
+  25% {
+    opacity: 0.7;
+  }
+
+  50% {
+    transform: translateX(40%);
+    opacity: 0.35;
+  }
+
+  75% {
+    opacity: 0.7;
+  }
+
+  100% {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+}
+.track-card.is-playing .track-cover {
+  animation: musicCover 1.2s ease-in-out infinite;
+}
+
+@keyframes musicCover {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.018);
+  }
+}
+/* "Bass" vibration underneath the card */
+@keyframes musicCardBass {
+  0%,
+  100% {
+    transform: translateY(0) scaleX(0.85);
+    opacity: 0.35;
+  }
+
+  50% {
+    transform: translateY(-7px) scaleX(1.08);
+    opacity: 0.9;
+  }
+}
+
+#resultHistory {
+  width: min(100% - 32px, 760px);
+  margin: 48px auto 80px;
+}
+
+.duel-history {
+  width: 100%;
+}
+
+.duel-history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  margin-bottom: 18px;
+
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+
+  opacity: 0.6;
+}
+
+.duel-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.duel-history-round {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.duel-history-round-label {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+
+  opacity: 0.45;
+}
+
+/*
+ * Each duel is deliberately a column.
+ * The two cards are stacked vertically.
+ */
+.duel-history-cards {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 10px;
+}
+
+/* =========================================================
+   DUEL HISTORY — WINNER / LOSER STATES
+   ========================================================= */
+
+.duel-history-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  width: 100%;
+  min-width: 0;
+  min-height: 88px;
+  padding: 10px;
+
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 16px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.045),
+      rgba(255, 255, 255, 0.012)
+    ),
+    rgba(17, 17, 20, 0.82);
+
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.035);
+
+  transition:
+    transform 280ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 240ms ease,
+    background 240ms ease,
+    box-shadow 300ms ease,
+    opacity 240ms ease,
+    filter 240ms ease;
+}
+
+/* =========================================================
+   LOSER
+   ========================================================= */
+
+.duel-history-card:not(.is-winner) {
+  opacity: 0.48;
+  filter: saturate(0.45) brightness(0.78);
+
+  border-color: rgba(255, 255, 255, 0.055);
+
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.025), rgba(0, 0, 0, 0.08)),
+    rgba(14, 14, 17, 0.78);
+
+  box-shadow:
+    0 7px 22px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.025);
+
+  transform: scale(0.985);
+}
+
+/* Loser hover */
+.duel-history-card:not(.is-winner):hover {
+  opacity: 0.72;
+  filter: saturate(0.65) brightness(0.9);
+
+  transform: translateY(-2px) scale(0.995);
+
+  border-color: rgba(255, 255, 255, 0.13);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.04),
+      rgba(255, 255, 255, 0.012)
+    ),
+    rgba(18, 18, 21, 0.82);
+
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+/* =========================================================
+   SELECTED LOSER
+   The player picked this track, but it still lost.
+   ========================================================= */
+
+.duel-history-card.is-selected:not(.is-winner) {
+  opacity: 0.72;
+  filter: saturate(0.55) brightness(0.86);
+
+  border-color: rgba(255, 255, 255, 0.2);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.055),
+      rgba(255, 255, 255, 0.012)
+    ),
+    rgba(21, 21, 24, 0.86);
+
+  transform: translateY(-2px) scale(1);
+
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.28),
+    0 0 0 1px rgba(255, 255, 255, 0.025),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* "YOUR PICK" indicator for selected loser */
+.duel-history-card.is-selected:not(.is-winner)::before {
+  content: "YOUR PICK";
+
+  position: absolute;
+  top: 8px;
+  right: 9px;
+
+  z-index: 4;
+
+  padding: 4px 6px;
+
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 999px;
+
+  background: rgba(10, 10, 12, 0.72);
+
+  color: rgba(255, 255, 255, 0.48);
+
+  font-family: var(--font-mono);
+  font-size: 6px;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  line-height: 1;
+
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* =========================================================
+   WINNER
+   ========================================================= */
+
+.duel-history-card.is-winner {
+  opacity: 1;
+  filter: saturate(1.05) brightness(1.04);
+
+  border-color: rgba(30, 215, 96, 0.48);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(30, 215, 96, 0.12),
+      rgba(30, 215, 96, 0.035) 48%,
+      rgba(255, 255, 255, 0.025)
+    ),
+    rgba(16, 25, 19, 0.9);
+
+  transform: translateY(-3px) scale(1.012);
+
+  box-shadow:
+    0 0 0 1px rgba(30, 215, 96, 0.055),
+    0 15px 40px rgba(0, 0, 0, 0.32),
+    0 0 35px rgba(30, 215, 96, 0.14),
+    0 0 80px rgba(30, 215, 96, 0.045),
+    inset 0 1px 0 rgba(255, 255, 255, 0.09);
+
+  animation: historyWinnerPulse 3s ease-in-out infinite;
+}
+
+/* Winner hover */
+.duel-history-card.is-winner:hover {
+  transform: translateY(-6px) scale(1.018);
+
+  border-color: rgba(30, 215, 96, 0.7);
+
+  box-shadow:
+    0 0 0 1px rgba(30, 215, 96, 0.08),
+    0 20px 50px rgba(0, 0, 0, 0.38),
+    0 0 50px rgba(30, 215, 96, 0.2),
+    0 0 100px rgba(30, 215, 96, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+/* =========================================================
+   SELECTED WINNER
+   Strongest state in the history.
+   ========================================================= */
+
+.duel-history-card.is-selected.is-winner {
+  border-color: rgba(30, 215, 96, 0.72);
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(30, 215, 96, 0.16),
+      rgba(30, 215, 96, 0.055) 45%,
+      rgba(255, 255, 255, 0.035)
+    ),
+    rgba(17, 28, 20, 0.94);
+
+  transform: translateY(-5px) scale(1.018);
+
+  box-shadow:
+    0 0 0 1px rgba(30, 215, 96, 0.12),
+    0 18px 50px rgba(0, 0, 0, 0.4),
+    0 0 45px rgba(30, 215, 96, 0.2),
+    0 0 110px rgba(30, 215, 96, 0.075),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+
+  animation:
+    historyWinnerPulseStrong 2.4s ease-in-out infinite,
+    historyWinnerFloat 4s ease-in-out infinite;
+}
+
+/* =========================================================
+   WINNER BADGE
+   ========================================================= */
+
+.duel-history-card.is-winner::after {
+  content: "WINNER";
+
+  position: absolute;
+  top: 8px;
+  right: 9px;
+
+  z-index: 5;
+
+  padding: 4px 7px;
+
+  border: 1px solid rgba(30, 215, 96, 0.32);
+  border-radius: 999px;
+
+  background:
+    linear-gradient(135deg, rgba(30, 215, 96, 0.18), rgba(30, 215, 96, 0.07)),
+    rgba(5, 15, 8, 0.78);
+
+  color: var(--green);
+
+  font-family: var(--font-mono);
+  font-size: 7px;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  line-height: 1;
+
+  text-shadow: 0 0 10px rgba(30, 215, 96, 0.4);
+
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.24),
+    0 0 16px rgba(30, 215, 96, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+  animation: winnerBadgePulse 2s ease-in-out infinite;
+}
+
+/* =========================================================
+   PLAYCOUNT DIFFERENTIATION
+   ========================================================= */
+
+.duel-history-card.is-winner .duel-history-playcount strong {
+  color: var(--green);
+
+  text-shadow: 0 0 14px rgba(30, 215, 96, 0.3);
+}
+
+.duel-history-card:not(.is-winner) .duel-history-playcount strong {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* =========================================================
+   WINNER ANIMATIONS
+   ========================================================= */
+
+@keyframes historyWinnerPulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 1px rgba(30, 215, 96, 0.055),
+      0 15px 40px rgba(0, 0, 0, 0.32),
+      0 0 35px rgba(30, 215, 96, 0.12),
+      0 0 80px rgba(30, 215, 96, 0.04),
+      inset 0 1px 0 rgba(255, 255, 255, 0.09);
+  }
+
+  50% {
+    box-shadow:
+      0 0 0 1px rgba(30, 215, 96, 0.08),
+      0 16px 42px rgba(0, 0, 0, 0.34),
+      0 0 45px rgba(30, 215, 96, 0.18),
+      0 0 95px rgba(30, 215, 96, 0.06),
+      inset 0 1px 0 rgba(255, 255, 255, 0.11);
+  }
+}
+
+@keyframes historyWinnerPulseStrong {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 1px rgba(30, 215, 96, 0.1),
+      0 18px 50px rgba(0, 0, 0, 0.4),
+      0 0 45px rgba(30, 215, 96, 0.18),
+      0 0 110px rgba(30, 215, 96, 0.06),
+      inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  }
+
+  50% {
+    box-shadow:
+      0 0 0 1px rgba(30, 215, 96, 0.16),
+      0 20px 55px rgba(0, 0, 0, 0.42),
+      0 0 60px rgba(30, 215, 96, 0.27),
+      0 0 135px rgba(30, 215, 96, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  }
+}
+
+@keyframes historyWinnerFloat {
+  0%,
+  100% {
+    transform: translateY(-5px) scale(1.018);
+  }
+
+  50% {
+    transform: translateY(-7px) scale(1.02);
+  }
+}
+
+@keyframes winnerBadgePulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow:
+      0 4px 16px rgba(0, 0, 0, 0.24),
+      0 0 16px rgba(30, 215, 96, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  }
+
+  50% {
+    transform: scale(1.04);
+    box-shadow:
+      0 4px 18px rgba(0, 0, 0, 0.28),
+      0 0 24px rgba(30, 215, 96, 0.18),
+      inset 0 1px 0 rgba(255, 255, 255, 0.11);
+  }
+}
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .duel-history-card.is-winner,
+  .duel-history-card.is-selected.is-winner,
+  .duel-history-card.is-winner::after {
+    animation: none;
+  }
+}
+
+.duel-history-cover-wrap {
+  position: relative;
+
+  flex: 0 0 68px;
+  width: 68px;
+  height: 68px;
+}
+
+.duel-history-cover,
+.duel-history-cover-placeholder {
+  display: block;
+
+  width: 68px;
+  height: 68px;
+
+  border-radius: 11px;
+
+  object-fit: cover;
+}
+
+.duel-history-cover-placeholder {
+  display: grid;
+  place-items: center;
+
+  background: rgba(255, 255, 255, 0.06);
+
+  font-size: 24px;
+  opacity: 0.5;
+}
+
+.duel-history-picked {
+  position: absolute;
+
+  left: 5px;
+  bottom: 5px;
+
+  padding: 4px 6px;
+
+  border-radius: 5px;
+
+  background: rgba(0, 0, 0, 0.78);
+
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  line-height: 1;
+
+  white-space: nowrap;
+}
+
+.duel-history-info {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.duel-history-name {
+  overflow: hidden;
+
+  font-size: 14px;
+  font-weight: 750;
+  line-height: 1.25;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.duel-history-artists {
+  overflow: hidden;
+
+  font-size: 12px;
+  line-height: 1.3;
+
+  opacity: 0.52;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.duel-history-playcount {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+
+  margin-top: 3px;
+}
+
+.duel-history-playcount span {
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+
+  opacity: 0.4;
+}
+
+.duel-history-playcount strong {
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.duel-history-card.is-winner::after {
+  content: "WINNER";
+
+  position: absolute;
+  top: 10px;
+  right: 10px;
+
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+
+  opacity: 0.35;
+}
+
+@media (max-width: 900px) {
+  .result-screen {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #resultHistory {
+    width: 100%;
+    margin-top: 36px;
+    margin-bottom: 48px;
+  }
+
+  .duel-history-list {
+    gap: 22px;
+  }
+
+  .duel-history-card {
+    min-height: 78px;
+    padding: 8px;
+  }
+
+  .duel-history-cover-wrap,
+  .duel-history-cover,
+  .duel-history-cover-placeholder {
+    width: 60px;
+    height: 60px;
+  }
+
+  .duel-history-cover-wrap {
+    flex-basis: 60px;
+  }
+
+  .duel-history-name {
+    font-size: 13px;
+  }
+
+  .duel-history-artists {
+    font-size: 11px;
+  }
+  .duel-history-cards {
+    grid-template-columns: 1fr;
+  }
+  .duel-history-picked {
+    font-size: 7px;
+  }
+
+  .game::before {
+    background-image:
+      linear-gradient(
+        180deg,
+        rgba(8, 8, 10, 0.72) 0%,
+        rgba(8, 8, 10, 0.38) 38%,
+        rgba(8, 8, 10, 0.04) 48%,
+        rgba(8, 8, 10, 0.04) 52%,
+        rgba(8, 8, 10, 0.38) 62%,
+        rgba(8, 8, 10, 0.72) 100%
+      ),
+      linear-gradient(
+        180deg,
+        transparent 0%,
+        transparent 43%,
+        rgba(0, 0, 0, 0.38) 49%,
+        rgba(0, 0, 0, 0.38) 51%,
+        transparent 57%,
+        transparent 100%
+      ),
+      var(--game-cover-a), var(--game-cover-b);
+
+    background-size:
+      100% 100%,
+      100% 100%,
+      100% 50%,
+      100% 50%;
+
+    background-position:
+      center,
+      center,
+      top center,
+      bottom center;
+
+    background-repeat: no-repeat;
+  }
+
+  .game::after {
+    background:
+      linear-gradient(
+        180deg,
+        rgba(5, 5, 7, 0.5) 0%,
+        rgba(5, 5, 7, 0.2) 25%,
+        rgba(5, 5, 7, 0.02) 42%,
+        rgba(5, 5, 7, 0.2) 50%,
+        rgba(5, 5, 7, 0.02) 58%,
+        rgba(5, 5, 7, 0.2) 75%,
+        rgba(5, 5, 7, 0.5) 100%
+      ),
+      radial-gradient(
+        ellipse 75% 38% at 50% 50%,
+        rgba(8, 8, 10, 0.02),
+        rgba(8, 8, 10, 0.52) 100%
+      );
+  }
+
+  .game {
+    min-height: auto;
+    padding-top: 20px;
+    padding-bottom: 70px;
+  }
+
+  .game .scene {
+    width: 100%;
+    max-width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .game-header {
+    width: 100%;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .game-playlist-name {
+    max-width: 100%;
+    font-size: clamp(18px, 4vw, 24px);
+  }
+
+  .duel {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3vh;
+  }
+
+  .duel-vs {
+    width: 5vh;
+    align-self: center;
+    font-size: 2.5vh;
+  }
+
+  .track-option {
+    width: 25vh;
+  }
+
+  .track-cover-wrap {
+    border-radius: 12px;
+  }
+
+  .track-info {
+    padding: 11px 2px 2px;
+  }
+
+  .track-name {
+    font-size: clamp(14px, 3.5vw, 18px);
+  }
+
+  .track-artists {
+    font-size: 11px;
+  }
+
+  .track-album {
+    font-size: 9px;
+  }
+
+  .track-number {
+    top: 8px;
+    left: 8px;
+    width: 26px;
+    height: 26px;
+    font-size: 7px;
+  }
+
+  .duel-hint {
+    margin-top: 10px;
+    font-size: 8px;
+  }
+
+  .playcount-reveal {
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    padding: 20px 16px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .playcount-reveal-backdrop {
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+  }
+
+  .playcount-reveal-stage {
+    position: relative;
+    z-index: 2;
+
+    display: grid;
+
+    /* TOP → CENTER → BOTTOM */
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+
+    align-items: center;
+    justify-items: center;
+
+    width: min(100%, 360px);
+    max-height: calc(100dvh - 40px);
+
+    gap: 34px;
+  }
+
+  .reveal-track {
+    width: 100%;
+    max-width: 250px;
+    padding: 12px;
+    border-radius: 18px;
+  }
+
+  .reveal-loser {
+    transform-origin: center bottom;
+
+    animation:
+      revealLoserInMobile 700ms cubic-bezier(0.16, 1, 0.3, 1) forwards,
+      revealLoserSettleMobile 900ms 1500ms cubic-bezier(0.22, 1, 0.36, 1)
+        forwards;
+  }
+
+  .reveal-winner {
+    transform-origin: center top;
+
+    animation:
+      revealWinnerInMobile 700ms cubic-bezier(0.16, 1, 0.3, 1) forwards,
+      revealWinnerPulseMobile 1200ms 1450ms cubic-bezier(0.22, 1, 0.36, 1)
+        forwards;
+  }
+
+  .reveal-track-meta {
+    padding: 8px 2px 2px;
+  }
+
+  .reveal-track-name {
+    font-size: 13px;
+  }
+
+  .reveal-count {
+    margin-top: 7px;
+  }
+
+  .reveal-count strong {
+    font-size: 18px;
+  }
+
+  .reveal-center-ring {
+    width: 48px;
+    height: 48px;
+  }
+
+  .reveal-ring-two {
+    width: 68px;
+    height: 68px;
+  }
+
+  .reveal-equalizer {
+    transform: scale(0.75);
+  }
+
+  .reveal-center-label {
+    top: calc(50% + 34px);
+    transform: scale(0.8);
+  }
+
+  @keyframes revealLoserInMobile {
+    0% {
+      opacity: 0;
+      transform: translateY(-80px) scale(0.82);
+      filter: blur(5px);
+    }
+
+    55% {
+      opacity: 1;
+      filter: blur(0);
+    }
+
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      filter: blur(0);
+    }
+  }
+
+  @keyframes revealWinnerInMobile {
+    0% {
+      opacity: 0;
+      transform: translateY(80px) scale(0.82);
+      filter: blur(5px);
+    }
+
+    55% {
+      opacity: 1;
+      filter: blur(0);
+    }
+
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      filter: blur(0);
+    }
+  }
+
+  @keyframes revealLoserSettleMobile {
+    0% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      filter: saturate(1);
+    }
+
+    100% {
+      opacity: 0.46;
+      transform: translateY(-12px) scale(0.94);
+      filter: saturate(0.55) brightness(0.78);
+    }
+  }
+
+  @keyframes revealWinnerPulseMobile {
+    0% {
+      transform: scale(1);
+    }
+
+    35% {
+      transform: scale(1.045);
+    }
+
+    65% {
+      transform: scale(1.025);
+    }
+
+    100% {
+      transform: scale(1.035);
+    }
+  }
+
+  .result-screen {
+    min-height: auto;
+    overflow-y: auto;
+    padding: 40px 16px 80px;
+  }
+
+  .result-track-card {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 16px;
+    border-radius: 20px;
+  }
+
+  .result-cover-wrap {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .result-cover {
+    width: min(100%, 280px);
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 14px;
+  }
+
+  .result-track-info {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+@media (hover: none) {
+  .track-card:hover {
+    transform: none;
+    border-color: rgba(255, 255, 255, 0.09);
+    box-shadow:
+      0 20px 70px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  .track-card:hover .track-cover {
+    transform: none;
+    filter: none;
+  }
+
+  .track-card:hover::before,
+  .track-card:hover::after {
+    opacity: 0;
+  }
+
+  .track-card:hover .track-number {
+    color: rgba(255, 255, 255, 0.78);
+    border-color: rgba(255, 255, 255, 0.13);
+    transform: none;
+  }
+
+  .duel:hover .duel-vs {
+    color: var(--dim);
+    border-color: rgba(255, 255, 255, 0.1);
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .playcount-reveal.is-active {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  .reveal-loser,
+  .reveal-winner,
+  .reveal-impact-word,
+  .reveal-impact-mark,
+  .reveal-impact::before,
+  .reveal-impact::after,
+  .playcount-reveal-backdrop {
+    animation: none !important;
+  }
+
+  .reveal-loser {
+    opacity: 0.65;
+  }
+
+  .reveal-impact-word {
+    opacity: 1;
+    transform: none;
+  }
+}

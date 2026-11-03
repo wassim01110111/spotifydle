@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Early Wrapped</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="../styles.css" />
+    <link rel="stylesheet" href="wrapped.css" />
+  </head>
+  <body>
+    <div class="noise-layer" aria-hidden="true"></div>
+    <div id="topbar">
+      <div class="story-nav" id="story-nav" aria-hidden="true"></div>
+    </div>
+    <!-- ============ SCREEN 1: PICKER ============ -->
+    <section id="screen-picker" class="screen screen--picker is-active">
+      <div class="blob blob--a" aria-hidden="true"></div>
+      <div class="blob blob--b" aria-hidden="true"></div>
+
+      <div class="picker-content">
+        <p class="eyebrow">YOUR LISTENING, RECAPPED</p>
+        <h1 class="hero-title">
+          Wrapped<span class="hero-title__dot">.</span>
+        </h1>
+        <p class="picker-sub">
+          Pick a stretch of time. We'll pull the receipts.
+        </p>
+        <div class="range-options">
+          <div class="picker-options">
+            <button class="range-card" data-range="7">
+              <span class="range-card__num">7</span>
+              <span class="range-card__label">Days<br />Weekly Recap</span>
+            </button>
+            <button class="range-card" data-range="30">
+              <span class="range-card__num">30</span>
+              <span class="range-card__label">Days<br />Monthly Recap</span>
+            </button>
+            <button class="range-card" data-range="60">
+              <span class="range-card__num">60</span>
+              <span class="range-card__label">Days<br />Bimonthly Recap</span>
+            </button>
+          </div>
+          <div id="spotiSlider">
+            <div class="range-slider">
+              <div class="range-slider__header">
+                <span class="range-slider__eyebrow">SELECT RANGE</span>
+
+                <div id="rangeSliderValue">
+                  <span id="rangeValue"></span>
+                  <small>DAYS</small>
+                </div>
+              </div>
+
+              <div class="range-slider__control">
+                <span class="range-slider__min">1</span>
+
+                <div class="range-slider__track-wrap">
+                  <div class="range-slider__track">
+                    <div class="range-slider__fill" id="rangeFill"></div>
+                    <div class="range-slider__glow" id="rangeGlow"></div>
+                  </div>
+
+                  <input
+                    id="rangeSlider"
+                    class="range-slider__input"
+                    type="range"
+                    min="1"
+                    max="70"
+                    value="50"
+                  />
+
+                  <div class="range-slider__ticks">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                </div>
+
+                <span class="range-slider__max">70</span>
+              </div>
+            </div>
+            <button id="customCard" class="range-card" data-range="">
+              <span class="range-card__num"></span>
+              <span class="range-card__label">Days<br />Custom Recap</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SCREEN 2: LOADING ============ -->
+    <div class="loading-overlay" id="loadingOverlay" hidden>
+      <div id="vinyl" aria-hidden="true"></div>
+      <p id="loading-text">
+        Loading<span class="dots"
+          ><span>.</span><span>.</span><span>.</span></span
+        ><br /><span id="loadingState"></span>
+      </p>
+    </div>
+
+    <!-- ============ SCREEN 3: EMPTY / ERROR ============ -->
+    <section id="screen-empty" class="screen screen--empty">
+      <p class="eyebrow">NOTHING HERE YET</p>
+      <h2 class="empty-title">No plays found for this period.</h2>
+      <p class="empty-sub" id="empty-detail">
+        Try a different range once you've listened to something.
+      </p>
+      <button class="ghost-btn" id="btn-back-from-empty">← Back</button>
+    </section>
+
+    <!-- ============ SCREEN 4: STORY ============ -->
+    <section id="screen-story" class="screen screen--story">
+      <button
+        class="story-arrow story-arrow--prev"
+        id="btn-prev"
+        aria-label="Previous slide"
+      >
+        ‹
+      </button>
+      <button
+        class="story-arrow story-arrow--next"
+        id="btn-next"
+        aria-label="Next slide"
+      >
+        ›
+      </button>
+
+      <div class="story-track" id="story-track">
+        <!-- SLIDE 0 — HERO -->
+        <article class="slide slide--hero" data-accent="green">
+          <p class="eyebrow" id="slide-hero-range">MONTHLY RECAP</p>
+          <h2 class="slide-hero__number" id="stat-total-plays">0</h2>
+          <p class="slide-hero__label">tracks played</p>
+          <div class="slide-hero__row">
+            <div class="mini-stat">
+              <span class="mini-stat__num" id="stat-total-minutes">0</span>
+              <span class="mini-stat__label">minutes</span>
+            </div>
+            <div class="mini-stat">
+              <span class="mini-stat__num" id="stat-total-artists">0</span>
+              <span class="mini-stat__label">artists</span>
+            </div>
+            <div class="mini-stat">
+              <span class="mini-stat__num" id="stat-total-albums">0</span>
+              <span class="mini-stat__label">albums</span>
+            </div>
+            <div class="mini-stat">
+              <span class="mini-stat__num" id="stat-total-average-minute"
+                >0</span
+              >
+              <span class="mini-stat__label">minutes/day</span>
+            </div>
+            <div class="mini-stat">
+              <span class="mini-stat__num" id="stat-total-average-track"
+                >0</span
+              >
+              <span class="mini-stat__label">tracks/day</span>
+            </div>
+            <div class="mini-stat">
+              <div>
+                <span class="mini-stat__num" id="stat-total-unique-tracks"
+                  >0</span
+                >
+                %
+              </div>
+              <span class="mini-stat__label">unique tracks</span>
+            </div>
+          </div>
+          <p class="slide-hint">swipe or press → to continue</p>
+        </article>
+
+        <!-- SLIDE 1 — TOP TRACKS -->
+        <article class="slide slide--list" data-accent="coral">
+          <p class="eyebrow">TOP 5</p>
+          <h2 class="slide-title">Tracks</h2>
+          <ol class="rank-list" id="list-tracks"></ol>
+          <p class="stat-top">
+            <span id="stat-top-track"></span>
+          </p>
+        </article>
+
+        <!-- SLIDE 2 — TOP ARTISTS -->
+        <article class="slide slide--list" data-accent="violet">
+          <p class="eyebrow">TOP 5</p>
+          <h2 class="slide-title">Artists</h2>
+          <ol class="rank-list rank-list--round" id="list-artists"></ol>
+          <p class="stat-top">
+            <span id="stat-top-artist"></span>
+          </p>
+        </article>
+
+        <!-- SLIDE 3 — TOP ALBUMS -->
+        <article class="slide slide--list" data-accent="gold">
+          <p class="eyebrow">TOP 5</p>
+          <h2 class="slide-title">Albums</h2>
+          <ol class="rank-list" id="list-albums"></ol>
+          <p class="stat-top">
+            <span id="stat-top-album"></span>
+          </p>
+        </article>
+
+        <!-- SLIDE 4 — PEAK DAY -->
+        <article class="slide slide--peak" data-accent="green">
+          <p class="eyebrow">YOUR LOUDEST DAY</p>
+
+          <div class="peak-chart-wrap">
+            <div class="peak-chart" id="peak-chart">
+              <!-- Bars inserted by JS -->
+            </div>
+          </div>
+
+          <div class="peak-info">
+            <h2 class="peak-date" id="stat-peak-date">—</h2>
+            <div class="peak-sub">
+              <div>
+                <span id="stat-peak-count">0</span> tracks in a single day
+              </div>
+              <span id="stat-top-day"></span>
+            </div>
+          </div>
+        </article>
+
+        <!-- SLIDE 5 — SHARE / TICKET -->
+        <article class="slide slide--share" data-accent="green">
+          <p class="eyebrow">YOUR TICKET</p>
+          <div id="finalTicket">
+            <div class="ticket" id="ticket-card">
+              <div
+                class="ticket__hole ticket__hole--left"
+                aria-hidden="true"
+              ></div>
+
+              <div
+                class="ticket__hole ticket__hole--right"
+                aria-hidden="true"
+              ></div>
+
+              <div class="ticket__header">
+                <span class="ticket__logo">WRAPPED</span>
+                <span class="ticket__range" id="ticket-range">MONTHLY</span>
+              </div>
+
+              <div class="ticket__section">
+                <span class="ticket__section-label">TOP TRACKS</span>
+                <div class="ticket__rank-list" id="ticket-top-tracks"></div>
+              </div>
+
+              <div class="ticket__section">
+                <span class="ticket__section-label">TOP ARTISTS</span>
+                <div class="ticket__rank-list" id="ticket-top-artists"></div>
+              </div>
+
+              <div class="ticket__section">
+                <span class="ticket__section-label">TOP ALBUMS</span>
+                <div class="ticket__rank-list" id="ticket-top-albums"></div>
+              </div>
+              <div class="ticket__divider" aria-hidden="true"></div>
+
+              <div class="ticket__foot">
+                <div class="ticket__foot-item">
+                  <span class="ticket__foot-num" id="ticket-minutes">0</span>
+                  <span class="ticket__foot-label">MIN</span>
+                </div>
+                <div class="ticket__foot-item">
+                  <span class="ticket__foot-num" id="average-minutes">0</span>
+                  <span class="ticket__foot-label">AVERAGE/DAY</span>
+                </div>
+
+                <div class="ticket__foot-item">
+                  <span class="ticket__foot-num" id="ticket-peak-day">—</span>
+                  <span class="ticket__foot-label">LOUDEST DAY</span>
+                </div>
+              </div>
+
+              <svg
+                class="ticket__barcode"
+                id="ticket-barcode"
+                viewBox="0 0 240 40"
+                preserveAspectRatio="none"
+                aria-hidden="true"
+              ></svg>
+            </div>
+            <div id="shareContainer">
+              <div class="share-actions">
+                <button class="action-btn action-btn--primary" id="btn-save">
+                  Save image
+                </button>
+                <button class="action-btn" id="btn-copy">
+                  Copy to clipboard
+                </button>
+              </div>
+              <p class="share-status" id="share-status" role="status"></p>
+
+              <button class="ghost-btn ghost-btn--restart" id="btn-restart">
+                Start over
+              </button>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+    <audio id="audio" preload="none"></audio>
+
+    <script src="../script.js"></script>
+    <script src="html2canvas.min.js"></script>
+    <script src="wrapped.js"></script>
+  </body>
+</html>

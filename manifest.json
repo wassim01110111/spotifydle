@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "SpotifyDLE",
+  "version": "667",
+
+  "permissions": ["storage", "tabs"],
+  "icons": {
+    "48": "icons/Spotify_logo.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ],
+  "action": {
+    "default_title": "Open SpotifyDLE"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  }
+}

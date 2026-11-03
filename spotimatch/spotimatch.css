@@ -1,0 +1,1770 @@
+.game {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  margin: 0 auto;
+}
+
+.quit-btn {
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 8px 18px;
+  font-size: 12px;
+  font-family: var(--font-mono);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.quit-btn:hover {
+  border-color: var(--magenta);
+  color: var(--magenta);
+  box-shadow: 0 0 15px rgba(255, 0, 128, 0.3);
+  transform: translateY(-2px);
+}
+
+/* =========================================================
+   CARD DECK
+   ========================================================= */
+.swipe-tint {
+  position: absolute;
+  inset: 0;
+  z-index: 19;
+
+  border-radius: 24px;
+  pointer-events: none;
+
+  background: var(--swipe-tint-color, transparent);
+  opacity: var(--swipe-tint-opacity, 0);
+
+  transition:
+    opacity 0.05s linear,
+    background 0.05s linear;
+}
+.card-deck {
+  position: relative;
+  width: 100%;
+  height: 75vh;
+  aspect-ratio: 0.72;
+  perspective: 1500px;
+}
+
+/* =========================================================
+   CARD
+   ========================================================= */
+
+.tinder-card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--surface-raised);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+
+  transition:
+    transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    opacity 0.4s ease,
+    box-shadow 0.4s ease;
+
+  transform-origin: 50% 100%;
+
+  isolation: isolate;
+
+  /* Used by the swipe animations */
+  --swipe-x: 0px;
+  --swipe-y: 0px;
+  --swipe-rotation: 0deg;
+
+  /* Music playing effect */
+  animation: music-card-pulse 1.8s ease-in-out infinite;
+}
+
+/* =========================================================
+   CARD MUSIC GLOW
+   ========================================================= */
+
+.tinder-card::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 28px;
+
+  pointer-events: none;
+  z-index: 20;
+
+  background: radial-gradient(
+    circle at 50% 100%,
+    rgba(30, 215, 96, 0.45),
+    transparent 62%
+  );
+
+  opacity: 0.2;
+  filter: blur(14px);
+
+  animation: music-glow 1.5s ease-in-out infinite;
+}
+
+/* =========================================================
+   CARD MUSIC BORDER
+   ========================================================= */
+
+.tinder-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+
+  pointer-events: none;
+  z-index: 21;
+
+  border: 1px solid rgba(30, 215, 96, 0.3);
+
+  box-shadow:
+    0 0 10px rgba(30, 215, 96, 0.08),
+    0 0 30px rgba(30, 215, 96, 0.04),
+    inset 0 0 20px rgba(30, 215, 96, 0.03);
+
+  animation: music-border 1.2s ease-in-out infinite;
+}
+
+.tinder-card:hover {
+  box-shadow:
+    0 25px 60px rgba(0, 0, 0, 0.8),
+    0 0 20px rgba(30, 215, 96, 0.15);
+}
+
+/* =========================================================
+   IMAGE
+   ========================================================= */
+
+.card-img-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  overflow: hidden;
+
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+}
+
+.card-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  pointer-events: none;
+  -webkit-user-drag: none;
+
+  animation:
+    album-pulse 1.8s ease-in-out infinite,
+    album-vibrate 0.3s linear infinite;
+}
+
+.tinder-card:hover .card-cover {
+  transform: scale(1.04);
+}
+
+/* =========================================================
+   OPEN TRACK BUTTON
+   ========================================================= */
+
+.card-open-url {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(12px);
+
+  color: var(--white);
+
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+
+  padding: 6px 14px;
+
+  font-size: 11px;
+  font-family: var(--font-mono);
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s,
+    transform 0.2s,
+    box-shadow 0.2s;
+}
+
+.card-open-url:hover {
+  background: var(--green);
+  color: #000;
+
+  transform: scale(1.08) translateY(-1px);
+
+  box-shadow: 0 4px 15px rgba(30, 215, 96, 0.4);
+}
+
+/* =========================================================
+   CARD INFO
+   ========================================================= */
+
+.card-info {
+  padding: 24px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  flex: 1;
+  justify-content: center;
+
+  background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.2));
+
+  animation: info-vibrate 0.22s linear infinite;
+}
+
+.card-title {
+  font-size: 22px;
+  font-weight: 700;
+
+  color: var(--text);
+
+  line-height: 1.2;
+
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+
+  animation: title-beat 1.1s ease-in-out infinite;
+}
+
+.card-artists {
+  font-size: 14px;
+  color: var(--text-muted);
+
+  animation: text-breathe 1.7s ease-in-out infinite;
+}
+
+.card-album {
+  font-size: 12px;
+  color: var(--text-faint);
+
+  animation: text-breathe 2.1s ease-in-out infinite;
+}
+
+.card-link {
+  cursor: pointer;
+  display: inline-block;
+
+  transition:
+    color 0.2s,
+    transform 0.2s;
+}
+
+.card-link:hover {
+  color: var(--green);
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   CONTROLS
+   ========================================================= */
+
+.card-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 24px;
+  width: 100%;
+}
+
+.ctrl-btn {
+  width: 64px;
+  height: 64px;
+
+  border-radius: 50%;
+  border: none;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 28px;
+  cursor: pointer;
+
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+
+  transition:
+    transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    box-shadow 0.3s ease,
+    filter 0.2s ease;
+}
+
+.ctrl-btn:hover {
+  transform: scale(1.15) translateY(-3px);
+
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+
+  filter: brightness(1.1);
+}
+
+.ctrl-btn:active {
+  transform: scale(0.92) translateY(1px);
+}
+
+.remove-btn {
+  background: var(--surface);
+  color: var(--coral);
+  border: 2px solid var(--coral);
+}
+
+.remove-btn:hover {
+  box-shadow: 0 15px 35px rgba(255, 75, 75, 0.3);
+}
+
+.like-btn {
+  background: var(--surface);
+  color: var(--violet);
+  border: 2px solid var(--violet);
+
+  width: 56px;
+  height: 56px;
+
+  font-size: 24px;
+}
+
+.like-btn:hover {
+  box-shadow: 0 15px 35px rgba(138, 43, 226, 0.3);
+}
+
+.keep-btn {
+  background: var(--surface);
+  color: var(--green);
+  border: 2px solid var(--green);
+}
+
+.keep-btn:hover {
+  box-shadow: 0 15px 35px rgba(30, 215, 96, 0.3);
+}
+
+/* =========================================================
+   IDLE MUSIC ANIMATIONS
+   ========================================================= */
+
+@keyframes music-card-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 20px 50px rgba(0, 0, 0, 0.7),
+      0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+      0 0 0 rgba(30, 215, 96, 0);
+  }
+
+  50% {
+    box-shadow:
+      0 22px 55px rgba(0, 0, 0, 0.75),
+      0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+      0 0 35px rgba(30, 215, 96, 0.22);
+  }
+}
+
+@keyframes music-glow {
+  0%,
+  100% {
+    opacity: 0.15;
+    transform: scale(0.98);
+  }
+
+  50% {
+    opacity: 0.6;
+    transform: scale(1.025);
+  }
+}
+
+@keyframes music-border {
+  0%,
+  100% {
+    opacity: 0.3;
+
+    box-shadow:
+      0 0 8px rgba(30, 215, 96, 0.08),
+      0 0 20px rgba(30, 215, 96, 0.04),
+      inset 0 0 10px rgba(30, 215, 96, 0.02);
+  }
+
+  50% {
+    opacity: 1;
+
+    box-shadow:
+      0 0 12px rgba(30, 215, 96, 0.4),
+      0 0 35px rgba(30, 215, 96, 0.2),
+      inset 0 0 25px rgba(30, 215, 96, 0.08);
+  }
+}
+
+@keyframes album-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.018);
+  }
+}
+
+@keyframes album-vibrate {
+  0%,
+  100% {
+    margin-left: 0;
+  }
+
+  25% {
+    margin-left: 0.4px;
+  }
+
+  50% {
+    margin-left: -0.4px;
+  }
+
+  75% {
+    margin-left: 0.25px;
+  }
+}
+
+@keyframes info-vibrate {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(0.15px);
+  }
+
+  50% {
+    transform: translateX(-0.15px);
+  }
+
+  75% {
+    transform: translateX(0.1px);
+  }
+}
+
+@keyframes title-beat {
+  0%,
+  100% {
+    opacity: 0.9;
+
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  50% {
+    opacity: 1;
+
+    text-shadow:
+      0 2px 4px rgba(0, 0, 0, 0.3),
+      0 0 14px rgba(30, 215, 96, 0.2);
+  }
+}
+
+@keyframes text-breathe {
+  0%,
+  100% {
+    opacity: 0.72;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+/* =========================================================
+   LEFT — DESTROY / DISCARD
+   ========================================================= */
+
+/* =========================================================
+   LEFT — DESTROY / DECOMPOSE
+   Starts from the EXACT position where the user released.
+
+   The card:
+   1. Locks onto the release position
+   2. Shudders / destabilizes
+   3. Develops a fractured appearance
+   4. Breaks into irregular sections
+   5. Disperses toward the left
+   ========================================================= */
+
+.tinder-card.swipe-left-anim {
+  animation: destroy-card 0.85s cubic-bezier(0.55, 0, 0.85, 0.45) forwards !important;
+
+  pointer-events: none;
+
+  /*
+    Prevent the normal music animation from fighting
+    with the destruction animation.
+  */
+  animation-name: destroy-card !important;
+}
+
+/* =========================================================
+   DESTRUCTION GLOW / ENERGY
+   ========================================================= */
+
+.tinder-card.swipe-left-anim::before {
+  animation: destroy-glow 0.85s ease-out forwards !important;
+
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(255, 70, 70, 0.85) 0%,
+    rgba(255, 40, 40, 0.45) 18%,
+    rgba(255, 20, 20, 0.15) 42%,
+    transparent 72%
+  );
+
+  filter: blur(12px);
+
+  opacity: 0;
+}
+
+/* =========================================================
+   FRACTURE / SHARD OVERLAY
+   ========================================================= */
+
+.tinder-card.swipe-left-anim::after {
+  animation: destroy-fracture 0.85s ease-out forwards !important;
+
+  /*
+    Multiple sharp gradients simulate cracks and separated
+    pieces without requiring extra DOM elements.
+  */
+  background:
+    linear-gradient(
+      117deg,
+      transparent 0%,
+      transparent 17%,
+      rgba(255, 80, 80, 0.9) 17.2%,
+      transparent 17.8%,
+      transparent 34%,
+      rgba(255, 110, 110, 0.8) 34.3%,
+      transparent 35%,
+      transparent 52%,
+      rgba(255, 50, 50, 0.9) 52.3%,
+      transparent 53%,
+      transparent 71%,
+      rgba(255, 100, 100, 0.7) 71.3%,
+      transparent 72%,
+      transparent 100%
+    ),
+    linear-gradient(
+      62deg,
+      transparent 0%,
+      transparent 25%,
+      rgba(255, 50, 50, 0.65) 25.4%,
+      transparent 26%,
+      transparent 47%,
+      rgba(255, 90, 90, 0.75) 47.3%,
+      transparent 48%,
+      transparent 69%,
+      rgba(255, 50, 50, 0.7) 69.4%,
+      transparent 70%,
+      transparent 100%
+    );
+
+  background-size: 100% 100%;
+  mix-blend-mode: screen;
+
+  border: 1px solid rgba(255, 70, 70, 0.9);
+
+  box-shadow:
+    0 0 12px rgba(255, 40, 40, 0.5),
+    0 0 35px rgba(255, 30, 30, 0.2);
+
+  opacity: 0;
+}
+
+/* =========================================================
+   DESTROY CARD
+   ========================================================= */
+
+@keyframes destroy-card {
+  /*
+    EXACT RELEASE POSITION.
+    Nothing here sends the card back to translate(0,0).
+  */
+  0% {
+    opacity: 1;
+
+    transform: translate(var(--swipe-x), var(--swipe-y))
+      rotate(var(--swipe-rotation)) scale(1);
+
+    filter: brightness(1) saturate(1) blur(0);
+
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+  }
+
+  /*
+    Initial instability.
+  */
+  8% {
+    transform: translate(calc(var(--swipe-x) - 3px), calc(var(--swipe-y) + 2px))
+      rotate(calc(var(--swipe-rotation) - 1deg)) scale(1.015);
+
+    filter: brightness(1.25) saturate(1.25) blur(0);
+  }
+
+  /*
+    Violent micro-shake.
+  */
+  16% {
+    transform: translate(calc(var(--swipe-x) + 5px), calc(var(--swipe-y) - 3px))
+      rotate(calc(var(--swipe-rotation) + 1.5deg)) scale(1.025);
+
+    filter: brightness(1.5) saturate(1.5);
+  }
+
+  24% {
+    transform: translate(calc(var(--swipe-x) - 6px), calc(var(--swipe-y) + 4px))
+      rotate(calc(var(--swipe-rotation) - 2deg)) scale(1.02);
+
+    filter: brightness(1.8) saturate(1.7);
+  }
+
+  /*
+    First visible "break".
+    The card becomes asymmetrical.
+  */
+  34% {
+    transform: translate(
+        calc(var(--swipe-x) - 12px),
+        calc(var(--swipe-y) + 2px)
+      )
+      rotate(calc(var(--swipe-rotation) - 4deg)) scale(1.015);
+
+    clip-path: polygon(
+      0% 0%,
+      91% 0%,
+      100% 12%,
+      94% 27%,
+      100% 43%,
+      91% 58%,
+      97% 74%,
+      87% 100%,
+      0% 100%,
+      5% 83%,
+      0% 66%,
+      6% 48%,
+      1% 30%,
+      7% 14%
+    );
+
+    filter: brightness(1.9) saturate(1.9);
+  }
+
+  /*
+    Large sections begin separating.
+  */
+  45% {
+    transform: translate(
+        calc(var(--swipe-x) - 28px),
+        calc(var(--swipe-y) + 5px)
+      )
+      rotate(calc(var(--swipe-rotation) - 7deg)) scale(1);
+
+    clip-path: polygon(
+      0% 3%,
+      18% 0%,
+      34% 4%,
+      49% 0%,
+      67% 5%,
+      82% 0%,
+      100% 8%,
+
+      96% 23%,
+      100% 39%,
+      94% 52%,
+      100% 68%,
+      94% 84%,
+      88% 100%,
+
+      71% 96%,
+      55% 100%,
+      39% 95%,
+      23% 100%,
+      7% 95%,
+      0% 100%,
+
+      5% 82%,
+      0% 65%,
+      6% 50%,
+      0% 34%,
+      6% 18%
+    );
+
+    filter: brightness(2) saturate(2);
+  }
+
+  /*
+    The card is now visibly breaking apart while
+    still recognizable.
+  */
+  58% {
+    opacity: 0.88;
+
+    transform: translate(
+        calc(var(--swipe-x) - 75px),
+        calc(var(--swipe-y) + 8px)
+      )
+      rotate(calc(var(--swipe-rotation) - 12deg)) scale(0.94);
+
+    clip-path: polygon(
+      0% 8%,
+      12% 0%,
+      27% 8%,
+      41% 1%,
+      57% 7%,
+      73% 0%,
+      88% 9%,
+      100% 4%,
+
+      94% 19%,
+      100% 31%,
+      92% 44%,
+      100% 58%,
+      92% 72%,
+      98% 87%,
+      86% 100%,
+
+      70% 94%,
+      55% 100%,
+      41% 93%,
+      27% 100%,
+      12% 94%,
+      0% 100%,
+
+      7% 84%,
+      0% 69%,
+      8% 54%,
+      0% 40%,
+      7% 25%
+    );
+
+    filter: brightness(2.2) saturate(2.1) blur(0.3px);
+  }
+
+  /*
+    Major decomposition.
+    Irregular edges + shrinking + lateral movement.
+  */
+  72% {
+    opacity: 0.58;
+
+    transform: translate(
+        calc(var(--swipe-x) - 170px),
+        calc(var(--swipe-y) + 18px)
+      )
+      rotate(calc(var(--swipe-rotation) - 19deg)) scale(0.78);
+
+    clip-path: polygon(
+      0% 14%,
+      11% 4%,
+      21% 14%,
+      32% 3%,
+      43% 12%,
+      54% 2%,
+      66% 13%,
+      78% 4%,
+      89% 15%,
+      100% 9%,
+
+      95% 27%,
+      100% 39%,
+      92% 51%,
+      100% 64%,
+      91% 77%,
+      96% 91%,
+      82% 100%,
+
+      68% 91%,
+      55% 100%,
+      43% 91%,
+      30% 98%,
+      18% 90%,
+      5% 97%,
+      0% 84%,
+
+      8% 71%,
+      0% 59%,
+      7% 45%,
+      0% 31%
+    );
+
+    filter: brightness(2.5) saturate(2.4) blur(1px);
+  }
+
+  /*
+    Almost completely decomposed.
+  */
+  86% {
+    opacity: 0.25;
+
+    transform: translate(
+        calc(var(--swipe-x) - 310px),
+        calc(var(--swipe-y) + 30px)
+      )
+      rotate(calc(var(--swipe-rotation) - 27deg)) scale(0.58);
+
+    clip-path: polygon(
+      4% 19%,
+      15% 7%,
+      27% 18%,
+      39% 5%,
+      51% 17%,
+      63% 6%,
+      76% 20%,
+      89% 10%,
+      100% 24%,
+
+      94% 38%,
+      100% 51%,
+      90% 64%,
+      98% 78%,
+      84% 94%,
+
+      69% 86%,
+      56% 97%,
+      43% 87%,
+      29% 96%,
+      16% 84%,
+      3% 91%,
+      8% 73%,
+      0% 57%,
+      9% 42%,
+      2% 29%
+    );
+
+    filter: brightness(2.8) saturate(2.5) blur(2px);
+  }
+
+  /*
+    Final fragments disappear off the left side.
+  */
+  100% {
+    opacity: 0;
+
+    transform: translate(
+        calc(var(--swipe-x) - 125vw),
+        calc(var(--swipe-y) + 55px)
+      )
+      rotate(calc(var(--swipe-rotation) - 38deg)) scale(0.35);
+
+    clip-path: polygon(
+      8% 28%,
+      21% 12%,
+      35% 25%,
+      48% 10%,
+      62% 24%,
+      76% 13%,
+      92% 30%,
+      100% 45%,
+      88% 59%,
+      96% 76%,
+      78% 91%,
+      62% 78%,
+      47% 94%,
+      32% 79%,
+      17% 91%,
+      3% 72%,
+      10% 55%,
+      0% 40%
+    );
+
+    filter: brightness(3) saturate(2.5) blur(5px);
+  }
+}
+
+/* =========================================================
+   DESTRUCTION ENERGY
+   ========================================================= */
+
+@keyframes destroy-glow {
+  0% {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+
+  12% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+
+  28% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+
+  48% {
+    opacity: 0.75;
+    transform: scale(1.2);
+  }
+
+  68% {
+    opacity: 0.4;
+    transform: scale(1.45);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.8);
+  }
+}
+
+/* =========================================================
+   FRACTURE OVERLAY
+   ========================================================= */
+
+@keyframes destroy-fracture {
+  0% {
+    opacity: 0;
+    transform: scale(1);
+    clip-path: inset(0);
+  }
+
+  15% {
+    opacity: 0.15;
+  }
+
+  30% {
+    opacity: 0.8;
+    transform: scale(1.01);
+
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+  }
+
+  48% {
+    opacity: 1;
+    transform: scale(1.025);
+
+    clip-path: polygon(
+      0% 3%,
+      17% 0%,
+      34% 4%,
+      51% 0%,
+      69% 4%,
+      85% 0%,
+      100% 3%,
+      96% 20%,
+      100% 38%,
+      96% 56%,
+      100% 76%,
+      96% 100%,
+      79% 96%,
+      62% 100%,
+      45% 96%,
+      27% 100%,
+      9% 96%,
+      0% 100%,
+      4% 80%,
+      0% 60%,
+      4% 40%,
+      0% 20%
+    );
+  }
+
+  68% {
+    opacity: 0.7;
+    transform: scale(0.92);
+
+    clip-path: polygon(
+      4% 8%,
+      20% 2%,
+      38% 9%,
+      56% 1%,
+      74% 8%,
+      94% 3%,
+      100% 20%,
+      94% 40%,
+      100% 60%,
+      93% 80%,
+      100% 100%,
+      78% 93%,
+      59% 100%,
+      40% 93%,
+      21% 100%,
+      0% 91%,
+      7% 71%,
+      0% 51%,
+      7% 30%,
+      0% 15%
+    );
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(0.65);
+    clip-path: inset(35% 40% 35% 40%);
+  }
+}
+
+/* =========================================================
+   RIGHT — KEEP
+   ========================================================= */
+
+.tinder-card.swipe-right-anim {
+  animation: keep-card 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) forwards !important;
+
+  pointer-events: none;
+}
+
+.tinder-card.swipe-right-anim::before {
+  animation: keep-glow 0.55s ease-out forwards !important;
+
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(30, 215, 96, 0.7),
+    rgba(30, 215, 96, 0.15) 40%,
+    transparent 70%
+  );
+
+  filter: blur(12px);
+}
+
+.tinder-card.swipe-right-anim::after {
+  animation: keep-border 0.55s ease-out forwards !important;
+
+  border-color: rgba(30, 215, 96, 0.95);
+
+  box-shadow:
+    0 0 20px rgba(30, 215, 96, 0.7),
+    0 0 60px rgba(30, 215, 96, 0.3),
+    inset 0 0 30px rgba(30, 215, 96, 0.15);
+}
+
+/* =========================================================
+   UP — LOVE
+   ========================================================= */
+
+.tinder-card.like-anim {
+  animation: love-card 0.55s cubic-bezier(0.2, 0.9, 0.25, 1.2) forwards !important;
+
+  pointer-events: none;
+}
+
+.tinder-card.like-anim::before {
+  content: "";
+  position: absolute;
+  z-index: 50;
+
+  left: 50%;
+  top: 50%;
+
+  width: 150px;
+  height: 150px;
+
+  transform: translate(-50%, -50%) scale(0);
+
+  pointer-events: none;
+
+  background: #ff4f91;
+
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='black' d='M50 88C46 84 10 62 10 32C10 12 34 4 50 22C66 4 90 12 90 32C90 62 54 84 50 88Z'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='black' d='M50 88C46 84 10 62 10 32C10 12 34 4 50 22C66 4 90 12 90 32C90 62 54 84 50 88Z'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+
+  filter: drop-shadow(0 0 4px #ffb3cc) drop-shadow(0 0 10px #ff4f91)
+    drop-shadow(0 0 20px #ff2d75) drop-shadow(0 0 40px rgba(255, 45, 117, 0.9))
+    drop-shadow(0 0 70px rgba(255, 30, 100, 0.65))
+    drop-shadow(0 0 110px rgba(255, 20, 90, 0.4));
+
+  animation: love-heart-glow 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275)
+    forwards !important;
+}
+
+.tinder-card.like-anim::after {
+  animation: love-border 0.55s ease-out forwards !important;
+
+  border-color: rgba(255, 80, 140, 0.95);
+
+  box-shadow:
+    0 0 20px rgba(255, 60, 130, 0.8),
+    0 0 60px rgba(255, 40, 100, 0.4),
+    inset 0 0 35px rgba(255, 50, 120, 0.15);
+}
+
+/* =========================================================
+   DESTROY KEYFRAMES
+   Starts from the EXACT position where the user released
+   ========================================================= */
+
+@keyframes destroy-border {
+  0% {
+    opacity: 0.3;
+  }
+
+  30% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+/* =========================================================
+   KEEP KEYFRAMES
+   Starts from the EXACT position where the user released
+   ========================================================= */
+
+@keyframes keep-card {
+  0% {
+    opacity: 1;
+
+    transform: translate(var(--swipe-x), var(--swipe-y))
+      rotate(var(--swipe-rotation)) scale(1);
+  }
+
+  15% {
+    transform: translate(calc(var(--swipe-x) + 5px), calc(var(--swipe-y) - 2px))
+      rotate(calc(var(--swipe-rotation) + 1deg)) scale(1.025);
+  }
+
+  30% {
+    transform: translate(
+        calc(var(--swipe-x) + 15px),
+        calc(var(--swipe-y) - 4px)
+      )
+      rotate(calc(var(--swipe-rotation) + 3deg)) scale(1.04);
+  }
+
+  55% {
+    opacity: 0.9;
+
+    transform: translate(
+        calc(var(--swipe-x) + 100px),
+        calc(var(--swipe-y) - 15px)
+      )
+      rotate(calc(var(--swipe-rotation) + 12deg)) scale(0.95);
+  }
+
+  100% {
+    opacity: 0;
+
+    transform: translate(
+        calc(var(--swipe-x) + 100vw),
+        calc(var(--swipe-y) - 40px)
+      )
+      rotate(calc(var(--swipe-rotation) + 25deg)) scale(0.8);
+  }
+}
+
+@keyframes keep-glow {
+  0% {
+    opacity: 0.15;
+    transform: scale(0.9);
+  }
+
+  35% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.7);
+  }
+}
+
+@keyframes keep-border {
+  0% {
+    opacity: 0.3;
+  }
+
+  35% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+/* =========================================================
+   LOVE KEYFRAMES
+   Starts from the EXACT position where the user released
+   ========================================================= */
+
+@keyframes love-card {
+  0% {
+    opacity: 1;
+
+    transform: translate(var(--swipe-x), var(--swipe-y))
+      rotate(var(--swipe-rotation)) scale(1);
+  }
+
+  15% {
+    transform: translate(var(--swipe-x), calc(var(--swipe-y) - 12px))
+      rotate(var(--swipe-rotation)) scale(1.06);
+  }
+
+  30% {
+    transform: translate(var(--swipe-x), calc(var(--swipe-y) + 4px))
+      rotate(calc(var(--swipe-rotation) - 1deg)) scale(1.03);
+  }
+
+  45% {
+    transform: translate(var(--swipe-x), calc(var(--swipe-y) - 18px))
+      rotate(calc(var(--swipe-rotation) + 1deg)) scale(1.08);
+
+    filter: brightness(1.3) saturate(1.3);
+  }
+
+  65% {
+    opacity: 0.95;
+
+    transform: translate(var(--swipe-x), calc(var(--swipe-y) - 100px))
+      rotate(calc(var(--swipe-rotation) + 3deg)) scale(0.95);
+  }
+
+  100% {
+    opacity: 0;
+
+    transform: translate(var(--swipe-x), calc(var(--swipe-y) - 100vh))
+      rotate(calc(var(--swipe-rotation) + 8deg)) scale(0.65);
+
+    filter: brightness(1.8) saturate(1.8) blur(3px);
+  }
+}
+
+@keyframes love-heart-glow {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.15);
+
+    filter: drop-shadow(0 0 4px #ffb3cc) drop-shadow(0 0 10px #ff4f91);
+  }
+
+  12% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.25);
+
+    filter: drop-shadow(0 0 5px #fff) drop-shadow(0 0 15px #ff8db5)
+      drop-shadow(0 0 35px #ff2d75)
+      drop-shadow(0 0 70px rgba(255, 30, 100, 0.9))
+      drop-shadow(0 0 110px rgba(255, 20, 90, 0.55));
+  }
+
+  25% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.95);
+  }
+
+  40% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.08);
+
+    filter: drop-shadow(0 0 6px #fff) drop-shadow(0 0 18px #ff6b9d)
+      drop-shadow(0 0 40px #ff2d75)
+      drop-shadow(0 0 80px rgba(255, 30, 100, 0.85))
+      drop-shadow(0 0 120px rgba(255, 20, 90, 0.5));
+  }
+
+  65% {
+    opacity: 0.85;
+    transform: translate(-50%, calc(-50% - 35px)) scale(0.95);
+
+    filter: drop-shadow(0 0 8px #ffb3cc) drop-shadow(0 0 20px #ff4f91)
+      drop-shadow(0 0 45px #ff2d75)
+      drop-shadow(0 0 90px rgba(255, 30, 100, 0.7));
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% - 140px)) scale(0.45);
+
+    filter: drop-shadow(0 0 8px #ff4f91) drop-shadow(0 0 25px #ff2d75)
+      drop-shadow(0 0 60px rgba(255, 30, 100, 0.4));
+  }
+}
+@keyframes love-border {
+  0% {
+    opacity: 0.3;
+  }
+
+  25% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+/* =========================================================
+   MODAL
+   ========================================================= */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+
+  z-index: 99999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+  background: var(--surface-raised);
+
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+
+  padding: 36px;
+
+  max-width: 400px;
+  width: 90%;
+
+  text-align: center;
+
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+
+  animation: scaleUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modal-content p {
+  font-size: 18px;
+  font-weight: 600;
+
+  margin-bottom: 24px;
+
+  color: var(--text);
+}
+
+.modal-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+}
+
+.modal-btn {
+  padding: 12px 28px;
+
+  border-radius: 999px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+  border: none;
+
+  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modal-btn:hover {
+  transform: scale(1.08) translateY(-2px);
+
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+}
+
+.green-btn {
+  background: var(--green);
+  color: #000;
+}
+
+.gray-btn {
+  background: var(--surface);
+  color: var(--text);
+
+  border: 1px solid var(--border);
+}
+/* =========================================================
+   CONFIRMATION MODAL
+   ========================================================= */
+
+.confirmation-modal {
+  width: min(900px, calc(100vw - 32px));
+  max-width: 900px;
+  max-height: calc(100vh - 32px);
+
+  /*
+   * Do not create a scrollbar inside the confirmation modal.
+   */
+  overflow: hidden;
+
+  padding: 30px;
+}
+
+.confirmation-header {
+  margin-bottom: 20px;
+}
+
+.confirmation-header h2 {
+  margin: 0 0 6px;
+}
+
+.confirmation-header p {
+  margin: 0;
+  opacity: 0.7;
+}
+
+.confirmation-sections {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.confirmation-section {
+  min-width: 0;
+}
+
+.confirmation-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.confirmation-section-header h3 {
+  margin: 0;
+}
+
+.confirmation-count {
+  display: block;
+  margin-top: 3px;
+  font-size: 0.85rem;
+  opacity: 0.65;
+}
+
+/* =========================================================
+   CONFIRMATION CARD STOCKPILE
+   ========================================================= */
+
+.confirmation-deck {
+  position: relative;
+  height: 230px;
+  min-height: 230px;
+  border-radius: 14px;
+  overflow: hidden;
+  isolation: isolate;
+}
+.confirmation-deck.empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+
+  opacity: 0.4;
+}
+
+.confirmation-deck.empty::after {
+  content: "No tracks selected";
+}
+
+/*
+ * Each card is offset progressively.
+ *
+ * --deck-index is supplied by JS.
+ * --deck-offset-x and --deck-offset-y make the album
+ * covers visibly fan out instead of occupying the exact
+ * same position.
+ */
+.confirmation-track-card {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+
+  width: min(88%, 360px);
+  height: 82px;
+
+  transform: translate(
+      calc(-40% - var(--deck-index) * 14px),
+      calc(-40% - var(--deck-index) * 40px)
+    )
+    rotate(calc((var(--deck-index) - 10) * 1deg));
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 8px;
+
+  border-radius: 12px;
+  background: var(--modal-card-background, #222);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.25);
+
+  z-index: calc(100 - var(--deck-index));
+
+  overflow: hidden;
+}
+
+.confirmation-track-card:nth-child(n + 11) {
+  opacity: 0.78;
+}
+
+.confirmation-track-cover {
+  width: 66px;
+  height: 66px;
+
+  flex: 0 0 66px;
+
+  object-fit: cover;
+
+  border-radius: 8px;
+
+  background: rgba(255, 255, 255, 0.06);
+
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+}
+
+.confirmation-track-details {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.confirmation-track-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  font-weight: 600;
+}
+
+.confirmation-track-artist {
+  margin-top: 4px;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  font-size: 0.85rem;
+  opacity: 0.65;
+}
+
+/* =========================================================
+   CONFIRMATION BUTTONS
+   ========================================================= */
+
+.confirmation-actions {
+  display: grid;
+
+  grid-template-columns:
+    minmax(150px, 1fr)
+    minmax(150px, 1fr)
+    minmax(170px, 1.15fr)
+    minmax(120px, 0.8fr);
+
+  gap: 10px;
+
+  margin-top: 20px;
+}
+
+.confirmation-actions .modal-btn {
+  width: 100%;
+  min-width: 0;
+  min-height: 48px;
+
+  padding: 12px 18px;
+
+  white-space: nowrap;
+}
+
+.confirmation-actions .modal-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+
+  transform: none;
+  box-shadow: none;
+}
+
+.red-btn {
+  background: #b42318;
+  color: white;
+}
+
+.primary-btn {
+  background: #4f46e5;
+  color: white;
+}
+
+/* =========================================================
+   MOBILE CONFIRMATION
+   ========================================================= */
+
+@media (max-width: 700px) {
+  .confirmation-modal {
+    width: calc(100vw - 24px);
+    padding: 22px;
+  }
+
+  .confirmation-sections {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .confirmation-deck {
+    height: 170px;
+  }
+
+  .confirmation-actions {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.red-btn {
+  background: #b42318;
+  color: white;
+}
+
+.primary-btn {
+  background: #4f46e5;
+  color: white;
+}
+
+@media (max-width: 700px) {
+  .confirmation-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .confirmation-actions .modal-btn {
+    min-height: 46px;
+  }
+  .confirmation-sections {
+    grid-template-columns: 1fr;
+  }
+
+  .confirmation-deck {
+    height: 190px;
+    min-height: 190px;
+  }
+
+  .confirmation-actions {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 430px) {
+  .confirmation-actions {
+    grid-template-columns: 1fr;
+  }
+}
+/* =========================================================
+   MODAL ANIMATIONS
+   ========================================================= */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleUp {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 900px) {
+  html,
+  body {
+    width: 100%;
+    overflow-x: hidden;
+    overscroll-behavior-x: none;
+  }
+  .card-title {
+    font-size: clamp(17px, 4.5vw, 20px);
+    line-height: 1.2;
+  }
+
+  .card-artists {
+    font-size: clamp(12px, 3.2vw, 14px);
+  }
+
+  .card-album {
+    font-size: clamp(10px, 2.8vw, 12px);
+  }
+  .game {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+
+    gap: 20px;
+  }
+
+  .card-deck {
+    touch-action: pan-y;
+
+    width: 55vw;
+    height: 55vh;
+
+    aspect-ratio: auto;
+
+    position: relative;
+
+    margin: 0;
+  }
+
+  .card-controls {
+    width: 100%;
+    gap: 18px;
+  }
+}
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .tinder-card,
+  .tinder-card::before,
+  .tinder-card::after,
+  .card-cover,
+  .card-info,
+  .card-title,
+  .card-artists,
+  .card-album {
+    animation: none !important;
+  }
+
+  .swipe-left-anim,
+  .swipe-right-anim,
+  .like-anim {
+    transition: opacity 0.2s ease;
+  }
+}

@@ -1,0 +1,562 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SPOTIFYDLE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../styles.css" />
+    <link rel="stylesheet" href="spotifydle.css" />
+  </head>
+  <body>
+    <header id="topbar">
+      <div class="wordmark">SPOTIFY<span class="wordmark-dle">DLE</span></div>
+      <button class="profile-badge" id="profileBadge" title="Your level">
+        <span class="profile-level" id="profileLevel">Lv. 1</span>
+        <span class="profile-bar"
+          ><span class="profile-bar-fill" id="profileBarFill"></span
+        ></span>
+      </button>
+      <button class="icon-btn" id="statsBtn" title="Stats">
+        <svg
+          viewBox="0 0 24 24"
+          width="18"
+          height="18"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+        >
+          <path d="M3 3v18h18M8 17V10M13 17V6M18 17v-4" />
+        </svg>
+      </button>
+      <button class="icon-btn" id="achievementsBtn" title="Achievements">
+        <svg
+          viewBox="0 0 24 24"
+          width="18"
+          height="18"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M8 4h8v5a4 4 0 0 1-8 0V4Z" />
+          <path d="M8 6H5a1 1 0 0 0-1 1v1a4 4 0 0 0 4 4" />
+          <path d="M16 6h3a1 1 0 0 1 1 1v1a4 4 0 0 1-4 4" />
+          <path d="M12 13v4" />
+          <path d="M8 21h8" />
+          <path d="M9 17h6" />
+        </svg>
+      </button>
+      <button class="icon-btn" id="settingsBtn" title="Settings">
+        <svg
+          viewBox="0 0 24 24"
+          width="18"
+          height="18"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <circle cx="12" cy="12" r="3" />
+          <path
+            d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"
+          />
+        </svg>
+      </button>
+      <div class="score-readout" id="scoreReadout" hidden>
+        <span class="score-label">points</span>
+        <span class="score-value" id="scoreValue">100</span>
+      </div>
+    </header>
+    <div class="loading-overlay" id="loadingOverlay" hidden>
+      <div id="vinyl" aria-hidden="true"></div>
+      <p id="loading-text">
+        Loading<span class="dots"
+          ><span>.</span><span>.</span><span>.</span></span
+        >
+      </p>
+    </div>
+    <div class="scene">
+      <div class="modal-overlay" id="modalOverlay" hidden>
+        <div class="modal-box">
+          <button class="modal-close" id="modalClose">✕</button>
+
+          <div class="modal-panel" id="settingsPanel" hidden>
+            <h2 class="modal-title">settings</h2>
+
+            <div class="setting-group">
+              <div class="setting-label">difficulty</div>
+              <div class="segmented" id="difficultySeg">
+                <button data-value="easy" class="seg-opt">easy · 100</button>
+                <button data-value="medium" class="seg-opt">medium · 50</button>
+                <button data-value="hard" class="seg-opt">hard · 25</button>
+                <button data-value="extreme" class="seg-opt">
+                  extreme · 1
+                </button>
+              </div>
+            </div>
+
+            <div class="setting-group">
+              <div class="setting-label">guess mode</div>
+              <div class="segmented" id="guessModeSeg">
+                <button data-value="both" class="seg-opt">
+                  track + artist
+                </button>
+                <button data-value="track" class="seg-opt">track only</button>
+                <button data-value="artist" class="seg-opt">artist only</button>
+                <button data-value="either" class="seg-opt">
+                  track or artist
+                </button>
+              </div>
+            </div>
+
+            <div class="setting-group" id="maxArtistsGroup">
+              <div class="setting-label">artists to guess</div>
+              <div class="setting-row">
+                <div class="stepper" id="maxArtistsStepper">
+                  <button
+                    type="button"
+                    class="stepper-btn"
+                    id="maxArtistsMinus"
+                  >
+                    −
+                  </button>
+                  <span class="stepper-value" id="maxArtistsValue">1</span>
+                  <button type="button" class="stepper-btn" id="maxArtistsPlus">
+                    +
+                  </button>
+                </div>
+                <label class="toggle small">
+                  <span class="setting-sub">all artists</span>
+                  <input type="checkbox" id="allArtistsToggle" />
+                  <span class="toggle-track"
+                    ><span class="toggle-thumb"></span
+                  ></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="setting-group setting-row">
+              <div>
+                <div class="setting-label">death mode</div>
+                <div class="setting-sub">score hits 0 → run ends</div>
+              </div>
+              <label class="toggle">
+                <input type="checkbox" id="deathModeToggle" />
+                <span class="toggle-track"
+                  ><span class="toggle-thumb"></span
+                ></span>
+              </label>
+            </div>
+            <div class="setting-group" id="timerGroup">
+              <div class="setting-row">
+                <div>
+                  <div class="setting-label">timer mode</div>
+                  <div class="setting-sub">
+                    guess before time runs out — faster wins earn bonus xp
+                  </div>
+                </div>
+                <label class="toggle small">
+                  <input type="checkbox" id="timerModeToggle" />
+                  <span class="toggle-track"
+                    ><span class="toggle-thumb"></span
+                  ></span>
+                </label>
+              </div>
+              <div class="setting-row" id="timerSecondsRow">
+                <div class="stepper" id="timerSecondsStepper">
+                  <button
+                    type="button"
+                    class="stepper-btn"
+                    id="timerSecondsMinus"
+                  >
+                    −
+                  </button>
+                  <span class="stepper-value" id="timerSecondsValue">2:00</span>
+                  <button
+                    type="button"
+                    class="stepper-btn"
+                    id="timerSecondsPlus"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div id="saveSettingsDiv" hidden>
+              <button class="save-settings-btn" id="saveSettingsBtn">
+                save changes
+              </button>
+              <span class="setting-sub"
+                >Changing difficulty or death mode restarts your current
+                playlist from the beginning.
+              </span>
+            </div>
+          </div>
+
+          <div class="modal-panel" id="achievementsPanel" hidden>
+            <h2 class="modal-title">achievements</h2>
+            <div class="stats-sub-title">
+              achievements <span id="statsAchievementsCount"></span>
+            </div>
+            <div class="achievements-grid" id="statsAchievements"></div>
+          </div>
+
+          <div class="modal-panel" id="statsPanel" hidden>
+            <h2 class="modal-title">stats</h2>
+
+            <div class="stats-grid" id="statsGrid"></div>
+
+            <div class="stats-sub-title">hints used</div>
+            <div class="stats-hint-list" id="statsHintList"></div>
+
+            <div class="stats-sub-title">most played</div>
+            <div class="stats-playlist-list" id="statsPlaylistList"></div>
+
+            <div class="stats-sub-title">daily streaks</div>
+            <div class="stats-playlist-list" id="statsDailyStreakList"></div>
+
+            <button id="resetStatBtn" class="reset-button">
+              RESET EVERYTHING???
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="toast-container" id="toastContainer"></div>
+      <section class="library" id="featured">
+        <div class="library-header">
+          <div class="breadcrumb" id="featured">Featured</div>
+        </div>
+        <div class="library-grid" id="featuredGrid"></div>
+      </section>
+      <!-- LIBRARY — the initial view. Only this shows at boot. -->
+      <section class="library" id="library">
+        <div class="library-header">
+          <button class="crumb-back" id="libraryBack" hidden>← back</button>
+          <div class="breadcrumb" id="breadcrumb"></div>
+          <button
+            class="shuffle-btn"
+            id="shuffleBtn"
+            title="Pick a random playlist"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M17 3l4 4-4 4M3 7h6l2 2M17 21l4-4-4-4M3 17h6l2-2M13 13l4 4M13 11l4-4"
+              />
+            </svg>
+            shuffle
+          </button>
+        </div>
+
+        <div class="library-search">
+          <input
+            type="text"
+            id="librarySearch"
+            placeholder="search loaded playlists & folders…"
+            autocomplete="off"
+          />
+        </div>
+
+        <div class="library-url-row">
+          <input
+            type="text"
+            id="playlistUrlInput"
+            placeholder="or paste a playlist/album link…"
+            autocomplete="off"
+          />
+          <button class="url-load-btn" id="playlistUrlBtn">load</button>
+        </div>
+
+        <div class="library-grid" id="libraryGrid"></div>
+        <div class="library-empty" id="libraryEmpty" hidden>
+          this folder is empty
+        </div>
+        <button id="backToTopBtn" aria-label="Back to top" title="Back to top">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 5L5.5 11.5L7 13l4-4v10h2V9l4 4 1.5-1.5L12 5z" />
+          </svg>
+        </button>
+      </section>
+
+      <!-- GAME — hidden until a playlist is picked. -->
+      <main class="game-card" id="gameCard" hidden>
+        <div class="game-topline" id="gameBackBtn">
+          <button class="crumb-back">← library</button>
+          <div class="playlist-tag" id="playlistTag"></div>
+        </div>
+
+        <section class="turntable" aria-label="Track snippet player">
+          <div class="timer-readout" id="timerReadout" hidden>
+            <span id="timerValue">2:00</span>
+          </div>
+
+          <div class="platter-ring" id="progressRing">
+            <svg viewBox="0 0 200 200" class="progress-svg">
+              <circle cx="100" cy="100" r="92" class="progress-track" />
+              <circle
+                cx="100"
+                cy="100"
+                r="92"
+                class="progress-fill"
+                id="progressFill"
+              />
+            </svg>
+            <div class="disc" id="disc">
+              <img
+                id="albumImg"
+                class="album-img"
+                src=""
+                alt="album cover"
+                draggable="false"
+              />
+              <div class="disc-grooves"></div>
+              <div class="disc-hole"></div>
+            </div>
+            <div class="tonearm" id="tonearm">
+              <div class="tonearm-base"></div>
+              <div class="tonearm-arm"></div>
+              <div class="tonearm-head"></div>
+            </div>
+          </div>
+
+          <button class="play-btn" id="playBtn" aria-label="Play snippet">
+            <svg id="playIcon" viewBox="0 0 24 24" width="26" height="26">
+              <path d="M8 5v14l11-7z" fill="currentColor" />
+            </svg>
+            <svg
+              id="pauseIcon"
+              viewBox="0 0 24 24"
+              width="26"
+              height="26"
+              style="display: none"
+            >
+              <path d="M6 5h4v14H6zM14 5h4v14h-4z" fill="currentColor" />
+            </svg>
+          </button>
+
+          <div class="clip-readout">
+            <span class="clip-time" id="clipTime">1s</span>
+            <span class="clip-of">clip length</span>
+          </div>
+        </section>
+
+        <section class="hints" aria-label="Hints">
+          <button class="hint-chip" id="random-hint" data-kind="random">
+            <span class="hint-name">Random hint</span>
+            <span class="hint-sub"></span>
+          </button>
+          <h2 class="hints-title">Track hints</h2>
+
+          <div class="hint-grid">
+            <button class="hint-chip" data-kind="snippet">
+              <span class="hint-name">Longer snippet</span>
+              <span class="hint-sub"></span>
+            </button>
+
+            <button class="hint-chip" data-kind="cover">
+              <span class="hint-name">Album cover</span>
+              <span class="hint-sub"></span>
+            </button>
+
+            <button class="hint-chip" data-kind="date">
+              <span class="hint-name">Release date</span>
+              <span class="hint-sub"></span>
+            </button>
+
+            <button class="hint-chip" data-kind="duration">
+              <span class="hint-name">Duration</span>
+              <span class="hint-sub"></span>
+            </button>
+          </div>
+
+          <h3 class="hints-category">main artist hints</h3>
+
+          <div class="hint-grid">
+            <button class="hint-chip" data-kind="followers">
+              <span class="hint-name">Followers</span>
+              <span class="hint-sub"></span>
+            </button>
+
+            <button class="hint-chip" data-kind="listeners">
+              <span class="hint-name">Monthly listeners</span>
+              <span class="hint-sub"></span>
+            </button>
+
+            <button class="hint-chip" data-kind="topCity">
+              <span class="hint-name">Top listening city</span>
+              <span class="hint-sub"></span>
+            </button>
+
+            <button class="hint-chip" data-kind="genres">
+              <span class="hint-name">Artist Genres</span>
+              <span class="hint-sub"></span>
+            </button>
+          </div>
+        </section>
+
+        <section class="facts" id="factsRow" aria-live="polite"></section>
+
+        <section class="guess-zone" aria-label="Guesses">
+          <form class="guess-row" id="trackForm">
+            <div class="guess-field">
+              <label for="trackInput">track name</label>
+              <input
+                type="text"
+                id="trackInput"
+                placeholder="type the track title…"
+                autocomplete="off"
+              />
+              <div class="guess-reveal" id="trackReveal" hidden></div>
+            </div>
+            <button type="submit" class="guess-submit" id="trackSubmit">
+              Guess
+            </button>
+            <div class="guess-status" id="trackStatus"></div>
+          </form>
+
+          <form class="guess-row" id="artistForm">
+            <div class="guess-field">
+              <label for="artistInput">artist</label>
+              <input
+                type="text"
+                id="artistInput"
+                placeholder="type an artist…"
+                autocomplete="off"
+              />
+              <div class="guess-reveal" id="artistReveal" hidden></div>
+            </div>
+            <button type="submit" class="guess-submit" id="artistSubmit">
+              Guess
+            </button>
+            <div class="guess-status" id="artistStatus"></div>
+          </form>
+        </section>
+
+        <div class="wrong-log" id="answerLog"></div>
+
+        <button type="button" class="skip-btn" id="skipBtn">
+          skip track →
+        </button>
+      </main>
+
+      <!-- RESULT — hidden until a round ends. -->
+      <section class="result" id="result" hidden>
+        <img id="resultImg" class="result-img" src="" alt="result-img" />
+        <div class="result-body">
+          <div class="result-tag" id="resultTag">solved</div>
+          <div class="result-track" id="resultTrack"></div>
+          <div class="result-artists" id="resultArtists"></div>
+          <div class="result-score">
+            final score <span id="resultScore"></span>
+          </div>
+          <div class="result-actions" id="resultActions">
+            <button class="next-btn" id="resultAnotherBtn">
+              another track →
+            </button>
+            <button class="next-btn secondary" id="resultLibraryBtn">
+              choose playlist →
+            </button>
+          </div>
+        </div>
+      </section>
+      <section class="death-screen" id="deathScreen" hidden>
+        <div class="death-body">
+          <div class="death-title">you died</div>
+
+          <div class="death-sub">
+            <span id="deathReason"></span>
+            <span id="deathPlaylistName"></span>
+          </div>
+
+          <div class="result-card death-result">
+            <img id="deathCover" class="result-img" src="" alt="Album cover" />
+
+            <div class="result-info">
+              <div class="result-tag lost">missed track</div>
+
+              <div class="result-track" id="deathTrack"></div>
+
+              <div class="result-artists" id="deathArtists"></div>
+            </div>
+          </div>
+
+          <div class="death-stats">
+            <div>
+              <span id="deathGuessed">0</span>
+              <label>guessed correctly</label>
+            </div>
+            <div>
+              <span id="deathRunScore">0</span><label>total score</label>
+            </div>
+
+            <div>
+              <span id="deathPct">0%</span>
+              <label>playlist seen</label>
+            </div>
+          </div>
+
+          <div class="result-actions">
+            <button class="next-btn" id="deathRetryBtn">try again →</button>
+            <button class="next-btn secondary" id="deathLibraryBtn">
+              choose playlist →
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="complete-screen" id="completeScreen" hidden>
+        <div class="complete-body">
+          <div class="complete-title">playlist complete!</div>
+          <div class="complete-sub">
+            you've gone through every track in
+            <span id="completePlaylistName"></span>
+          </div>
+          <div class="complete-run-score">
+            total score this run: <span id="completeRunScore">0</span>
+          </div>
+
+          <div class="complete-bonus">
+            +<span id="completeBonus">0</span> bonus xp
+          </div>
+          <div class="complete-note" id="completeNote"></div>
+
+          <div class="result-actions">
+            <button class="next-btn" id="completeReplayBtn">
+              replay this playlist →
+            </button>
+            <button class="next-btn secondary" id="completeLibraryBtn">
+              choose new playlist →
+            </button>
+          </div>
+        </div>
+      </section>
+      <footer class="foot">
+        Needle drops cost nothing · every other hint costs points
+      </footer>
+    </div>
+
+    <audio id="audio" preload="none"></audio>
+
+    <script src="../script.js"></script>
+    <script src="spotifydle.js"></script>
+  </body>
+</html>

@@ -1,0 +1,35 @@
+[
+  {
+    "snippet": "https://p.scdn.co/mp3-preview/7f7ad9c652d844ee9328a8e4ee7b071671a6c463",
+    "album": {
+      "artists": ["63OG"],
+      "name": "63PROBLÈMES (=63SOLUTIONS)",
+      "image": "https://i.scdn.co/image/ab67616d00001e021278185dc8d244b1fd77fcd8"
+    },
+    "name": "illumination",
+    "artists": ["63OG"],
+    "release_date": "2026-04-17T00:00:00Z",
+    "duration": 126757
+  },
+  {
+    "name": "to listen list",
+    "type": "playlist",
+    "uri": "7I6CQLUxR9YromX1B6bqlk",
+    "count": 3874,
+    "cover": "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000d72c18b41efe5f2e90fce753005c"
+  },
+  {
+    "name": "Personal Playlists",
+    "type": "folder",
+    "uri": "859d2dfedb06af25",
+    "count": 15,
+    "cover": null
+  },
+  {
+    "name": "Liked Songs",
+    "type": "liked",
+    "uri": "collection:tracks",
+    "count": 6689,
+    "cover": null
+  }
+]

@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>spotiduel</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="../styles.css" />
+    <link rel="stylesheet" href="spotiduel.css" />
+  </head>
+
+  <body>
+    <div class="loading-overlay" id="loadingOverlay" hidden>
+      <div id="vinyl" aria-hidden="true"></div>
+
+      <p id="loading-text">
+        Loading<span class="dots">
+          <span>.</span>
+          <span>.</span>
+          <span>.</span>
+        </span>
+      </p>
+    </div>
+
+    <header id="topbar">
+      <div class="wordmark">SPOTI<span class="wordmark-dle">DUEL</span></div>
+
+      <div id="playMode" role="tablist" aria-label="Play mode">
+        <div id="playModeSlider"></div>
+
+        <button
+          class="play-mode-option active"
+          data-mode="most-played"
+          role="tab"
+          aria-selected="true"
+          type="button"
+        >
+          Most Played
+        </button>
+
+        <button
+          class="play-mode-option"
+          data-mode="preferred"
+          role="tab"
+          aria-selected="false"
+          type="button"
+        >
+          Preferred
+        </button>
+      </div>
+    </header>
+
+    <div class="scene">
+      <div class="toast-container" id="toastContainer"></div>
+
+      <section class="library" id="library">
+        <div class="library-header">
+          <button class="crumb-back" id="libraryBack" hidden type="button">
+            ← back
+          </button>
+
+          <div class="breadcrumb" id="breadcrumb"></div>
+
+          <button
+            class="shuffle-btn"
+            id="shuffleBtn"
+            title="Pick a random playlist"
+            type="button"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M17 3l4 4-4 4M3 7h6l2 2M17 21l4-4-4-4M3 17h6l2-2M13 13l4 4M13 11l4-4"
+              />
+            </svg>
+            shuffle
+          </button>
+        </div>
+
+        <div class="library-search">
+          <input
+            type="text"
+            id="librarySearch"
+            placeholder="search loaded playlists & folders…"
+            autocomplete="off"
+          />
+        </div>
+
+        <div class="library-url-row">
+          <input
+            type="text"
+            id="playlistUrlInput"
+            placeholder="or paste a playlist/album link…"
+            autocomplete="off"
+          />
+
+          <button class="url-load-btn" id="playlistUrlBtn" type="button">
+            load
+          </button>
+        </div>
+
+        <div class="library-grid" id="libraryGrid"></div>
+
+        <div class="library-empty" id="libraryEmpty" hidden>
+          this folder is empty
+        </div>
+
+        <button
+          id="backToTopBtn"
+          aria-label="Back to top"
+          title="Back to top"
+          type="button"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 5L5.5 11.5L7 13l4-4v10h2V9l4 4 1.5-1.5L12 5z" />
+          </svg>
+        </button>
+      </section>
+
+      <main class="game" id="game" hidden>
+        <div class="game-header">
+          <button class="game-back" id="gameBack" type="button">
+            ← library
+          </button>
+
+          <div class="game-context">
+            <div class="game-mode-label" id="gameModeLabel">MOST PLAYED</div>
+            <div class="game-playlist-name" id="gamePlaylistName"></div>
+          </div>
+        </div>
+
+        <div class="game-status" id="gameInfo">
+          <span id="gameStatus"></span><br /><span id="roundStatus"></span>
+        </div>
+
+        <section class="duel" id="duel">
+          <div
+            class="playcount-reveal"
+            id="playcountReveal"
+            aria-hidden="true"
+          ></div>
+          <div class="track-option">
+            <article class="track-card" id="trackCardA" tabindex="0">
+              <div class="track-cover-wrap">
+                <img class="track-cover" id="trackCoverA" alt="" />
+                <div class="track-cover-placeholder" id="trackPlaceholderA">
+                  ♪
+                </div>
+              </div>
+
+              <div class="track-info">
+                <div class="track-name" id="trackNameA"></div>
+                <div class="track-artists" id="trackArtistsA"></div>
+                <div class="track-album" id="trackAlbumA"></div>
+              </div>
+            </article>
+
+            <a
+              class="track-open-button"
+              id="trackUrlA"
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span>Open track</span>
+              <span class="track-open-arrow" aria-hidden="true">↗</span>
+            </a>
+            <audio id="gameAudioA" preload="none" loop></audio>
+          </div>
+
+          <div class="duel-vs" aria-hidden="true">VS</div>
+
+          <div class="track-option">
+            <article class="track-card" id="trackCardB" tabindex="0">
+              <div class="track-cover-wrap">
+                <img class="track-cover" id="trackCoverB" alt="" />
+                <div class="track-cover-placeholder" id="trackPlaceholderB">
+                  ♪
+                </div>
+              </div>
+
+              <div class="track-info">
+                <div class="track-name" id="trackNameB"></div>
+                <div class="track-artists" id="trackArtistsB"></div>
+                <div class="track-album" id="trackAlbumB"></div>
+              </div>
+            </article>
+
+            <a
+              class="track-open-button"
+              id="trackUrlB"
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span>Open track</span>
+              <span class="track-open-arrow" aria-hidden="true">↗</span>
+            </a>
+            <audio id="gameAudioB" preload="none" loop></audio>
+          </div>
+        </section>
+
+        <div class="duel-hint">
+          hover/hold to play snippet · click to choose
+        </div>
+      </main>
+
+      <section class="result-screen" id="resultScreen" hidden>
+        <div class="result-inner">
+          <div class="result-eyebrow" id="resultEyebrow"></div>
+
+          <h1 class="result-title" id="resultTitle"></h1>
+
+          <p class="result-subtitle" id="resultSubtitle"></p>
+          <div id="resultRounds" class="result-rounds" aria-live="polite"></div>
+
+          <div class="result-track" id="resultTrack"></div>
+
+          <div class="result-actions">
+            <button
+              class="result-button primary"
+              id="resultPlayAgain"
+              type="button"
+            >
+              play again
+            </button>
+
+            <button
+              class="result-button secondary"
+              id="resultLibrary"
+              type="button"
+            >
+              library
+            </button>
+          </div>
+        </div>
+        <div id="resultHistory"></div>
+      </section>
+    </div>
+
+    <audio id="audioA" preload="none"></audio>
+
+    <script src="../script.js"></script>
+    <script src="spotiduel.js"></script>
+  </body>
+</html>

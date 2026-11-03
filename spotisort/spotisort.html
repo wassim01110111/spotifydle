@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SPOTISORT</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../styles.css" />
+    <link rel="stylesheet" href="spotisort.css" />
+  </head>
+  <body>
+    <header id="topbar">
+      <div class="wordmark">SPOTI<span class="wordmark-dle">SORT</span></div>
+
+      <div id="playMode" role="tablist" aria-label="Play mode">
+        <div id="playModeSlider"></div>
+
+        <button
+          class="play-mode-option active"
+          data-mode="Playcount"
+          role="tab"
+          aria-selected="true"
+          type="button"
+        ></button>
+
+        <button
+          class="play-mode-option"
+          data-mode="Release date"
+          role="tab"
+          aria-selected="false"
+          type="button"
+        ></button>
+        <button
+          class="play-mode-option"
+          data-mode="Duration"
+          role="tab"
+          aria-selected="false"
+          type="button"
+        ></button>
+        <button
+          class="play-mode-option"
+          data-mode="Last Added"
+          role="tab"
+          aria-selected="false"
+          type="button"
+        ></button>
+        <button
+          class="play-mode-option"
+          data-mode="Artist"
+          role="tab"
+          aria-selected="false"
+          type="button"
+        ></button>
+        <button
+          class="play-mode-option"
+          data-mode="Album"
+          role="tab"
+          aria-selected="false"
+          type="button"
+        ></button>
+        <button
+          class="play-mode-option"
+          data-mode="Original Position"
+          role="tab"
+          aria-selected="false"
+          type="button"
+        ></button>
+        <button
+          class="play-mode-option"
+          data-mode="Randomize"
+          role="tab"
+          aria-selected="false"
+          type="button"
+        ></button>
+      </div>
+    </header>
+    <div class="loading-overlay" id="loadingOverlay" hidden>
+      <div id="vinyl" aria-hidden="true"></div>
+      <p id="loading-text">
+        Loading<span class="dots"
+          ><span>.</span><span>.</span><span>.</span></span
+        ><br /><span id="loadingState"></span>
+      </p>
+    </div>
+    <div class="scene">
+      <!-- LIBRARY — the initial view. Only this shows at boot. -->
+      <div class="toast-container" id="toastContainer"></div>
+
+      <section class="library" id="library">
+        <div class="library-header">
+          <button class="crumb-back" id="libraryBack" hidden>← back</button>
+          <div class="breadcrumb" id="breadcrumb"></div>
+          <button
+            class="shuffle-btn"
+            id="shuffleBtn"
+            title="Pick a random playlist"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M17 3l4 4-4 4M3 7h6l2 2M17 21l4-4-4-4M3 17h6l2-2M13 13l4 4M13 11l4-4"
+              />
+            </svg>
+            shuffle
+          </button>
+        </div>
+
+        <div class="library-search">
+          <input
+            type="text"
+            id="librarySearch"
+            placeholder="search loaded playlists & folders…"
+            autocomplete="off"
+          />
+        </div>
+
+        <div class="library-url-row">
+          <input
+            type="text"
+            id="playlistUrlInput"
+            placeholder="or paste a playlist/album link…"
+            autocomplete="off"
+          />
+          <button class="url-load-btn" id="playlistUrlBtn">load</button>
+        </div>
+
+        <div class="library-grid" id="libraryGrid"></div>
+        <div class="library-empty" id="libraryEmpty" hidden>
+          this folder is empty
+        </div>
+      </section>
+      <section id="playlistPreview">
+        <div class="playlist-preview-toolbar">
+          <button id="playlistBackBtn" type="button"></button>
+          <button id="filterPlaylistBtn" type="button"></button>
+          <button id="confirmPlaylist" type="button"></button>
+          <button id="orderToggle" type="button" hidden></button>
+        </div>
+        <div id="playlistPreviewHeader">
+          <h2>playlist preview</h2>
+          <span id="playlistPreviewCount"></span>
+        </div>
+        <div id="playlistPreviewList"></div>
+      </section>
+    </div>
+    <div id="confirmationOverlay" class="spotify-popup" hidden>
+      <div
+        class="confirmation-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="confirmation-title"
+      >
+        <h2 id="confirmation-title">Save playlist</h2>
+
+        <div class="playlist-options">
+          <label class="playlist-option">
+            <input type="radio" name="playlist-action" value="new" checked />
+
+            <span class="playlist-option-content">
+              <span class="playlist-option-title"> Save as new playlist </span>
+
+              <span class="new-playlist-fields">
+                <span class="field">
+                  <span class="field-label">Playlist name</span>
+                  <input
+                    id="playlist-name"
+                    name="playlist-name"
+                    type="text"
+                    maxlength="100"
+                    placeholder="My playlist"
+                    required
+                  />
+                </span>
+
+                <span class="field">
+                  <span class="field-label">Description</span>
+                  <textarea
+                    id="playlist-description"
+                    name="playlist-description"
+                    rows="3"
+                    maxlength="300"
+                    placeholder="Add a description..."
+                  ></textarea>
+                </span>
+              </span>
+            </span>
+          </label>
+
+          <label class="playlist-option" id="dangerousOption">
+            <input type="radio" name="playlist-action" value="replace" />
+
+            <span class="playlist-option-content">
+              <span class="playlist-option-title">
+                Replace current playlist
+              </span>
+
+              <div class="replace-warning">
+                <p>This will permanently replace the current playlist.</p>
+                <p>
+                  Make sure to have a stable connection or your playlist might
+                  become incomplete.
+                </p>
+              </div>
+            </span>
+          </label>
+        </div>
+
+        <div class="confirmation-actions">
+          <button
+            type="button"
+            id="cancel-playlist"
+            class="overlay-button button-secondary"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="button"
+            id="confirm-playlist"
+            class="overlay-button button-primary"
+          >
+            Save playlist
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="filterOverlay" class="spotify-popup" hidden>
+      <div
+        class="confirmation-dialog filter-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="filter-title"
+      >
+        <h2 id="filter-title">Filter playlist</h2>
+
+        <div class="filter-form">
+          <div class="filter-group autocomplete-group">
+            <label for="artistFilter">Artist</label>
+
+            <div class="autocomplete-input-wrapper">
+              <input
+                id="artistFilter"
+                name="artist"
+                type="text"
+                autocomplete="off"
+                placeholder="Any artist"
+              />
+
+              <div class="autocomplete-input-line"></div>
+            </div>
+
+            <div id="artistSelected" class="autocomplete-selected"></div>
+
+            <div
+              id="artistSuggestions"
+              class="autocomplete-suggestions"
+              role="listbox"
+              hidden
+            ></div>
+
+            <div
+              class="filter-mode-toggle"
+              role="group"
+              aria-label="Artist filter mode"
+            >
+              <button
+                type="button"
+                class="filter-mode-option active"
+                data-mode="include"
+                id="artistIncludeMode"
+              >
+                Only these artists
+              </button>
+
+              <button
+                type="button"
+                class="filter-mode-option"
+                data-mode="exclude"
+                id="artistExcludeMode"
+              >
+                Exclude these artists
+              </button>
+            </div>
+          </div>
+          <div class="filter-group autocomplete-group">
+            <label for="albumFilter">Album</label>
+
+            <div class="autocomplete-input-wrapper">
+              <input
+                id="albumFilter"
+                name="album"
+                type="text"
+                autocomplete="off"
+                placeholder="Any album"
+              />
+
+              <div class="autocomplete-input-line"></div>
+            </div>
+
+            <div id="albumSelected" class="autocomplete-selected"></div>
+
+            <div
+              id="albumSuggestions"
+              class="autocomplete-suggestions"
+              role="listbox"
+              hidden
+            ></div>
+
+            <div
+              class="filter-mode-toggle"
+              role="group"
+              aria-label="Album filter mode"
+            >
+              <button
+                type="button"
+                class="filter-mode-option active"
+                data-mode="include"
+                id="albumIncludeMode"
+              >
+                Only these albums
+              </button>
+
+              <button
+                type="button"
+                class="filter-mode-option"
+                data-mode="exclude"
+                id="albumExcludeMode"
+              >
+                Exclude these albums
+              </button>
+            </div>
+          </div>
+          <!-- Release date -->
+          <fieldset class="filter-group date-range-group">
+            <legend>Release date</legend>
+
+            <div class="date-range">
+              <div class="date-field">
+                <label for="releaseDateFrom">From</label>
+                <input
+                  id="releaseDateFrom"
+                  name="releaseDateFrom"
+                  type="date"
+                />
+              </div>
+
+              <span class="date-separator">–</span>
+
+              <div class="date-field">
+                <label for="releaseDateTo">To</label>
+                <input id="releaseDateTo" name="releaseDateTo" type="date" />
+              </div>
+            </div>
+
+            <button
+              id="clearReleaseDate"
+              class="clear-date-button"
+              type="button"
+            >
+              Clear dates
+            </button>
+          </fieldset>
+
+          <!-- Duration -->
+          <div class="filter-group duration-group">
+            <div class="filter-label-row">
+              <label>Duration</label>
+
+              <span id="durationValue" class="filter-value">
+                Any duration
+              </span>
+            </div>
+
+            <div class="duration-slider">
+              <div class="slider-track"></div>
+              <div id="durationRange" class="slider-range"></div>
+
+              <input
+                id="durationMin"
+                type="range"
+                min="0"
+                max="2400"
+                step="1"
+                value="0"
+                aria-label="Minimum duration"
+              />
+
+              <input
+                id="durationMax"
+                type="range"
+                min="0"
+                max="2400"
+                step="1"
+                value="2400"
+                aria-label="Maximum duration"
+              />
+            </div>
+
+            <div class="duration-labels">
+              <span>0:00</span>
+              <span>40:00</span>
+            </div>
+          </div>
+
+          <!-- Added date -->
+          <fieldset class="filter-group date-range-group">
+            <legend>Added date</legend>
+
+            <div class="date-range">
+              <div class="date-field">
+                <label for="addedDateFrom">From</label>
+                <input id="addedDateFrom" name="addedDateFrom" type="date" />
+              </div>
+
+              <span class="date-separator">–</span>
+
+              <div class="date-field">
+                <label for="addedDateTo">To</label>
+                <input id="addedDateTo" name="addedDateTo" type="date" />
+              </div>
+            </div>
+
+            <button id="clearAddedDate" class="clear-date-button" type="button">
+              Clear dates
+            </button>
+          </fieldset>
+
+          <!-- Unplayable -->
+          <label class="checkbox-filter" for="removeUnplayable">
+            <input
+              id="removeUnplayable"
+              name="removeUnplayable"
+              type="checkbox"
+            />
+
+            <span class="custom-checkbox" aria-hidden="true"></span>
+
+            <span class="checkbox-label"> Remove unplayable songs </span>
+          </label>
+          <label class="checkbox-filter" for="removeDuplicates">
+            <input
+              id="removeDuplicates"
+              name="removeDuplicates"
+              type="checkbox"
+            />
+
+            <span class="custom-checkbox" aria-hidden="true"></span>
+
+            <span class="checkbox-label"> Remove duplicate songs </span>
+          </label>
+        </div>
+
+        <!-- Actions -->
+        <div class="filter-actions">
+          <button
+            id="cancelFilters"
+            class="overlay-button button-secondary"
+            type="button"
+          >
+            Cancel
+          </button>
+
+          <button
+            id="saveFilters"
+            class="overlay-button button-primary"
+            type="button"
+          >
+            Save
+          </button>
+        </div>
+      </div>
+    </div>
+    <button id="backToTopBtn" aria-label="Back to top" title="Back to top">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 5L5.5 11.5L7 13l4-4v10h2V9l4 4 1.5-1.5L12 5z" />
+      </svg>
+    </button>
+
+    <script src="../script.js"></script>
+    <script src="spotisort.js"></script>
+  </body>
+</html>
